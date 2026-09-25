@@ -3,8 +3,12 @@
 A verified, provenance-preserving mirror of the Range Commanders Council (RCC)
 **IRIG Standard 106 Telemetry Standards**, every edition that could be found
 from 106-59 through the current **106-24 Revision 1** (January 2025), together
-with the companion handbooks **RCC 123** (IRIG 106 Chapter 10 Programmers
-Handbook) and **RCC 124** (TMATS Handbook) and the TMATS XML schemas.
+with the companion handbooks **RCC 118** (Test Methods for Telemetry Systems
+and Subsystems), **RCC 119** (Telemetry Applications Handbook), **RCC 123**
+(IRIG 106 Chapter 10 Programmers Handbook), and **RCC 124** (TMATS Handbook);
+the TMATS, DDML, and IHAL XML schemas; the Telemetry Network Standard
+companion files (Chapters 21–28); and change-marked review drafts ("pink
+sheets") that show what changed between editions.
 
 It exists so the TelemetryWorks IRIG 106 crates (`irig106-tmats`,
 `irig106-time`, `irig106-core`, ...) can cite an exact edition, chapter,
@@ -33,8 +37,9 @@ Python 3.11 or newer, standard library only:
 python scripts/fetch.py --edition 106-24R1              # one edition
 python scripts/fetch.py --chapter 9                     # Chapter 9 of every edition
 python scripts/fetch.py --edition 106-23 --chapter 9    # one chapter
-python scripts/fetch.py --kind handbook                 # RCC 123 and 124
-python scripts/fetch.py                                 # everything (~711 MiB)
+python scripts/fetch.py --kind handbook                 # RCC 118, 119, 123, 124
+python scripts/fetch.py --kind change-marked            # pink sheets and drafts
+python scripts/fetch.py                                 # everything (~970 MiB)
 python scripts/fetch.py --verify                        # re-check local copies
 ```
 
@@ -92,6 +97,31 @@ licensed under Apache-2.0; that license does not apply to the RCC documents.
   `HTML-TMATS.zip` from 106-15 to 106-24R1. They are still attached to each
   edition's release so every edition is complete on its own.
 - Gaps and broken original links are listed in `MISSING.md`.
+
+## Kinds of document
+
+`kind` in the manifest is one of: `full` (a whole edition, or its zip
+bundle), `front-matter`, `chapter`, `appendix`, `annex`, `handbook`
+(RCC 118/119/123/124, release tags like `rcc-118-20`), `schema` (TMATS,
+DDML, IHAL, and MDL XML schemas), `change-marked` (pink sheets and
+pre-release drafts; each note says whether it actually carries tracked
+changes), and `companion` (cover letters, spreadsheets, and other files
+published alongside an edition).
+
+The DDML and IHAL schemas published with 106-15 are the set that Chapter 9 of
+106-17 through 106-24R1 links to, so they are stored once, under the 106-15
+release. For the Telemetry Network Standard, irig106.org's
+`23_schema.zip` is the 2017 MDL v1.0.0 in every edition folder, while TRMC's
+copy linked from 106-23 onward is MDL Schema 1.2
+(`106-23/tmns/23_schema__trmc.zip`).
+
+## Standards cited but not mirrored
+
+IRIG 106 depends on standards from other bodies. They are cited by the
+TelemetryWorks crates, not copied here: MIL-STD-1553B (DoD, publicly
+available through the DoD ASSIST system), ARINC 429 (SAE ITC, copyrighted),
+IEEE 1588 (IEEE, copyrighted), IEEE 754 (IEEE, copyrighted), and FIPS PUB
+180-4 (NIST, the SHA-256 definition behind the TMATS `G\SHA` checksum).
 
 ## Adding a new edition
 
