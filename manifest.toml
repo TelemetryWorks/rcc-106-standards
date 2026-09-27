@@ -12944,3 +12944,39 @@ sha256 = "d6bbcbb76f866692c64d9e3c522fe1f0791189a530dd555d91e07e28249d1f0c"
 size = 116736
 retrieved = "2026-09-25"
 distribution = "unknown"
+
+[[document]]
+edition = "rcc-200-16"
+kind = "standard"
+title = "IRIG Serial Time Code Formats (IRIG Standard 200-16)"
+path = "files/rcc-200/200-16/200-16_IRIG_Serial_Time_Code_Formats.pdf"
+asset = "200-16_IRIG_Serial_Time_Code_Formats.pdf"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-200-16/200-16_IRIG_Serial_Time_Code_Formats.pdf"
+original_urls = ["https://www.trmc.osd.mil/wiki/download/attachments/113019842/200-16_IRIG_Serial_Time_Code_Formats.pdf?version=1&modificationDate=1623181164717&api=v2"]
+original_filenames = ["200-16_IRIG_Serial_Time_Code_Formats.pdf"]
+sha256 = "14adee16a76ab749d23015c61c22f8fe9fbd4a2186d5c5a59bbe5750148ed332"
+size = 1068587
+pages = 65
+pdf_created = "2019-05-14"
+retrieved = "2026-09-27"
+distribution = "A"
+distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE"
+note = "Cited by IRIG 106-24R1 Chapter 11 (Section 11.2.3.2) for IRIG time formats: \"RCC 200-16. August 2016 ... Available at https://www.trmc.osd.mil/wiki/x/wou8Bg\". The only edition on the TRMC Public RCC page. Byte-different copies exist; this one (TRMC) was created 2019-05-14 and has 65 pages. Other copies: 200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf (created 2016-08-16, 64 pages, from www.irig106.org)."
+
+[[document]]
+edition = "rcc-200-16"
+kind = "standard"
+title = "IRIG Serial Time Code Formats (IRIG Standard 200-16)"
+path = "files/rcc-200/200-16/200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf"
+asset = "200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-200-16/200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf"
+original_urls = ["http://irig106.org/docs/rcc/200-16_IRIG_Serial_Time_Code_Formats.pdf"]
+original_filenames = ["200-16_IRIG_Serial_Time_Code_Formats.pdf"]
+sha256 = "1ed96276cab951be12b40b5133c671508f1902f05ba82af3d3dc7f4385e1ee5f"
+size = 877586
+pages = 64
+pdf_created = "2016-08-16"
+retrieved = "2026-09-27"
+distribution = "A"
+distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE"
+note = "Byte-different variant of '200-16_IRIG_Serial_Time_Code_Formats.pdf' in this edition; renamed to avoid a filename collision. This copy (www.irig106.org) was created 2016-08-16 and has 64 pages; the TRMC copy was created 2019-05-14 and has 65."

@@ -115,3 +115,19 @@ Sources:
   - BandEdgeBackoff spreadsheets (106-07, 106-09, 106-11 and 106-15).
   - RCC 126/127/128/129 documents and their drafts (TG-136 and TG-142 letters).
   - irig106.org `/downloads/Ch10Tools_v*.exe`.
+
+---
+
+## Addition: RCC 200 (2026-09-27)
+
+IRIG Standard 200-16, **IRIG Serial Time Code Formats**, added at the owner's
+request because IRIG 106-24R1 Chapter 11 cites it for IRIG time formats
+("RCC 200-16. August 2016. May be superseded by update"). It is the only
+edition on the TRMC Public RCC page ("200 IRIG Serial Time Code Formats") and
+on irig106.org (`/docs/rcc/`). The two sites serve different bytes, so both
+are kept under the release `rcc-200-16`, kind `standard`:
+
+| File | Source | PDF created | Pages | Bytes | Dist. A marked |
+|---|---|---|---|---|---|
+| 200-16_IRIG_Serial_Time_Code_Formats.pdf | www.trmc.osd.mil | 2019-05-14 | 65 | 1,068,587 | yes |
+| 200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf | www.irig106.org | 2016-08-16 | 64 | 877,586 | yes |

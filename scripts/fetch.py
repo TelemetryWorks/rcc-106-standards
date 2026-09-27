@@ -88,7 +88,7 @@ def selected(docs: list[dict], args: argparse.Namespace) -> list[dict]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--edition", action="append", help="edition / release tag, e.g. 106-24R1 or rcc-124-22 (repeatable)")
-    parser.add_argument("--kind", action="append", help="full, chapter, appendix, annex, front-matter, handbook, schema (repeatable)")
+    parser.add_argument("--kind", action="append", help="full, chapter, appendix, annex, front-matter, handbook, standard, schema, companion, change-marked (repeatable)")
     parser.add_argument("--chapter", action="append", help="chapter number, e.g. 9 (repeatable)")
     parser.add_argument("--dest", type=Path, default=ROOT, help="root directory for the files/ tree (default: repository root)")
     parser.add_argument("--verify", action="store_true", help="only verify local files; download nothing")

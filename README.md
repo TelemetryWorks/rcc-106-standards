@@ -6,6 +6,8 @@ from 106-59 through the current **106-24 Revision 1** (January 2025), together
 with the companion handbooks **RCC 118** (Test Methods for Telemetry Systems
 and Subsystems), **RCC 119** (Telemetry Applications Handbook), **RCC 123**
 (IRIG 106 Chapter 10 Programmers Handbook), and **RCC 124** (TMATS Handbook);
+the **RCC 200** standard (IRIG Serial Time Code Formats), which Chapter 11
+cites for IRIG time;
 the TMATS, DDML, and IHAL XML schemas; the Telemetry Network Standard
 companion files (Chapters 21–28); and change-marked review drafts ("pink
 sheets") that show what changed between editions.
@@ -102,7 +104,9 @@ licensed under Apache-2.0; that license does not apply to the RCC documents.
 
 `kind` in the manifest is one of: `full` (a whole edition, or its zip
 bundle), `front-matter`, `chapter`, `appendix`, `annex`, `handbook`
-(RCC 118/119/123/124, release tags like `rcc-118-20`), `schema` (TMATS,
+(RCC 118/119/123/124, release tags like `rcc-118-20`), `standard` (other
+RCC standards that IRIG 106 cites: RCC 200, release tag `rcc-200-16`),
+`schema` (TMATS,
 DDML, IHAL, and MDL XML schemas), `change-marked` (pink sheets and
 pre-release drafts; each note says whether it actually carries tracked
 changes), and `companion` (cover letters, spreadsheets, and other files
