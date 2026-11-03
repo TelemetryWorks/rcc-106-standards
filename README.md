@@ -149,6 +149,10 @@ requirements.
 
 ## Adding a new edition
 
+Before committing archive metadata, run the [offline validation checks](docs/validation.md).
+PR/push CI runs those same checks. A separate manually triggered GitHub Actions
+workflow can audit every mirror byte and retain downloadable evidence.
+
 1. Download every document RCC publishes for the edition (full standard,
    front matter, chapters, appendixes, annexes, schemas).
 2. Add one `[[document]]` entry per file to `manifest.toml`, with all original

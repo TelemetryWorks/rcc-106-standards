@@ -12,13 +12,15 @@ import collections
 import concurrent.futures
 import datetime
 import hashlib
+import http.client
 import json
 import pathlib
 import shutil
 import subprocess
-import tomllib
 import urllib.parse
 import urllib.request
+
+from validate_manifest import parse_manifest
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 REPO = "TelemetryWorks/rcc-106-standards"
@@ -96,7 +98,7 @@ def download(task):
             result.update(bytes=size, sha256=sha.hexdigest(), finished=now())
             result["status"] = "downloaded" if size == asset["size"] else "size_mismatch"
             return result
-        except (OSError, ValueError) as exc:
+        except (OSError, ValueError, http.client.HTTPException) as exc:
             result.update(status="download_error", error_type=type(exc).__name__,
                           http_error=getattr(exc, "code", None), bytes=size,
                           finished=now())
@@ -112,7 +114,10 @@ def main():
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     manifest = (ROOT / "manifest.toml").read_bytes()
-    docs = tomllib.loads(manifest.decode("utf-8"))["document"]
+    try:
+        docs = parse_manifest(manifest)
+    except ValueError as exc:
+        parser.error(str(exc))
     manifest_sha = hashlib.sha256(manifest).hexdigest()
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()
     print("Enumerating all release assets (two inventory workers)...", flush=True)
@@ -124,7 +129,8 @@ def main():
     if checkpoints.exists():
         if not args.resume:
             parser.error("Evidence already exists; use --resume or a new --output")
-        assert json.loads((output / "binding.json").read_text()) == binding, "Audit inputs changed"
+        if json.loads((output / "binding.json").read_text()) != binding:
+            parser.error("Audit inputs changed")
         for line in checkpoints.read_text().splitlines():
             try:
                 row = json.loads(line)

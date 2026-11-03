@@ -2,6 +2,7 @@
 
 import contextlib
 import hashlib
+import http.client
 import io
 import json
 import pathlib
@@ -29,6 +30,9 @@ class AuditTests(unittest.TestCase):
             "edition": "test", "asset": "a_local.bin", "path": "files/test/a local.bin",
             "mirror_url": f"https://github.com/{audit.REPO}/releases/download/test/a_local.bin",
             "size": 3, "sha256": self.sha,
+            "kind": "companion", "title": "Fixture", "retrieved": "2026-11-03",
+            "distribution": "unknown", "original_urls": ["https://example.com/source.bin"],
+            "original_filenames": ["source.bin"],
         }
         self.asset = {"id": 1, "name": "a_local.bin", "size": 3, "state": "uploaded",
                       "digest": "sha256:" + self.sha, "browser_download_url": self.doc["mirror_url"]}
@@ -44,7 +48,7 @@ class AuditTests(unittest.TestCase):
                 mock.patch.object(audit.subprocess, "check_output", return_value=b"commit\n"), \
                 mock.patch.object(audit, "inventory", side_effect=[self.releases, final or self.releases]), \
                 mock.patch.object(audit.urllib.request, "urlopen", side_effect=lambda *a, **k: Response(body)) as network, \
-                contextlib.redirect_stdout(io.StringIO()):
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
             code = audit.main()
         return code, json.loads((self.output / "summary.json").read_text()), network
 
@@ -108,8 +112,37 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(summary["reused_checkpoints"], 1)
         network.assert_not_called()
         self.doc["size"] = 4
-        with self.assertRaisesRegex(AssertionError, "inputs changed"):
+        with self.assertRaises(SystemExit):
             self.run_audit(resume=True)
+
+    def test_corrupt_checkpoint_is_rejected_without_network(self):
+        self.run_audit()
+        (self.output / "downloads.jsonl").write_text("corrupt checkpoint\n")
+        with self.assertRaises(SystemExit), mock.patch.object(audit, "download") as download:
+            self.run_audit(resume=True)
+        download.assert_not_called()
+
+    def test_failed_checkpoint_is_retried(self):
+        self.run_audit(body=b"ab")
+        code, summary, network = self.run_audit(resume=True)
+        self.assertEqual(code, 0)
+        self.assertEqual(summary["reused_checkpoints"], 0)
+        self.assertEqual(network.call_count, 1)
+
+    def test_download_error_is_sanitized_and_bounded(self):
+        for exc in [OSError("secret=do-not-record"), http.client.IncompleteRead(b"x")]:
+            with self.subTest(exception=type(exc).__name__), \
+                    mock.patch.object(audit.urllib.request, "urlopen", side_effect=exc) as network:
+                row = audit.download(("test", self.asset))
+            self.assertEqual(network.call_count, 3)
+            self.assertEqual(row["status"], "download_error")
+            self.assertNotIn("do-not-record", json.dumps(row))
+
+    def test_invalid_manifest_fails_before_inventory(self):
+        self.doc["mirror_url"] = "https://example.com/wrong"
+        with self.assertRaises(SystemExit), mock.patch.object(audit, "download") as download:
+            self.run_audit()
+        download.assert_not_called()
 
     def test_inventory_change_fails(self):
         code, summary, _ = self.run_audit(final=[{**self.releases[0], "draft": True}])
