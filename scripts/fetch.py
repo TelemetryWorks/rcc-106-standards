@@ -22,10 +22,12 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import sys
-import tomllib
 import urllib.request
 from pathlib import Path
+
+from validate_manifest import load_manifest
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = ROOT / "manifest.toml"
@@ -61,7 +63,7 @@ def fetch(doc: dict, dest_root: Path) -> str:
     for url in [doc["mirror_url"], *doc["original_urls"]]:
         try:
             download(url, partial)
-        except OSError as exc:
+        except (OSError, http.client.HTTPException) as exc:
             print(f"    {url}: {exc}", file=sys.stderr)
             continue
         if verifies(partial, doc):
@@ -95,7 +97,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--list", action="store_true", help="only list the selected documents")
     args = parser.parse_args(argv)
 
-    docs = selected(tomllib.loads(MANIFEST.read_text(encoding="utf-8"))["document"], args)
+    try:
+        docs = selected(load_manifest(MANIFEST), args)
+    except ValueError as exc:
+        print(exc, file=sys.stderr)
+        return 1
     if not docs:
         print("No documents match the selection.", file=sys.stderr)
         return 1

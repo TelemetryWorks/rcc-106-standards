@@ -1,0 +1,45 @@
+name: Full GitHub mirror audit (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: full-mirror-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.11'
+      - name: Validate manifest before network access
+        run: python scripts/validate_manifest.py
+      - name: Save manifest and tool snapshots
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/mirror-audit"
+          cp manifest.toml "$RUNNER_TEMP/mirror-audit/manifest.toml"
+          cp scripts/audit_mirror.py scripts/validate_manifest.py "$RUNNER_TEMP/mirror-audit/"
+          git rev-parse HEAD > "$RUNNER_TEMP/mirror-audit/commit.txt"
+      - name: Stream and hash every GitHub release asset (two workers)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: python scripts/audit_mirror.py --output "$RUNNER_TEMP/mirror-audit"
+      - name: Retain audit evidence, including partial results on failure
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: mirror-audit-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mirror-audit/
+          if-no-files-found: error
+          retention-days: 30
