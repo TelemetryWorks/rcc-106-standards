@@ -129,11 +129,23 @@ a 2025 publication date for the calculator.
 
 ## Standards cited but not mirrored
 
-IRIG 106 depends on standards from other bodies. They are cited by the
-TelemetryWorks crates, not copied here: MIL-STD-1553B (DoD, publicly
-available through the DoD ASSIST system), ARINC 429 (SAE ITC, copyrighted),
-IEEE 1588 (IEEE, copyrighted), IEEE 754 (IEEE, copyrighted), and FIPS PUB
-180-4 (NIST, the SHA-256 definition behind the TMATS `G\SHA` checksum).
+IRIG 106 depends on standards from other bodies. The TelemetryWorks crates
+cite MIL-STD-1553B, ARINC 429, IEEE 1588, IEEE 754, and FIPS PUB 180-4
+(the SHA-256 definition behind the TMATS `G\SHA` checksum). These documents
+are not copied here; ARINC and IEEE publications are copyrighted.
+
+The following publisher status was checked on **2026-11-02**. Use the edition
+and profile required by the particular IRIG 106 edition being implemented.
+These status notes preserve historical citations and do not change those
+requirements.
+
+| Reference | Publisher status and official source |
+|---|---|
+| MIL-STD-1553B | DoD ASSIST lists **MIL-STD-1553 Revision C**, dated **2018-02-28**, as active. Retain Revision B where an edition-specific citation requires it. [ASSIST record](https://quicksearch.dla.mil/qsDocDetails.aspx?ident_number=36973) |
+| ARINC 429 | SAE ITC/AEEC lists **429P1-19**, published **2019-01-22**, as current for **Part 1**. Other parts have their own revisions. [SAE catalog](https://saemobilus.sae.org/standards/arinc429p1-19-429p1-19-digital-information-transfer-system-dits-part-1-functional-description-electrical-interfaces-label-assignments-word-formats) |
+| IEEE 1588 | **1588-2019**, published **2020-06-16**, is active and supersedes 1588-2008. Its catalog lists amendments a/b/c/d/e/g (2022-2024) and **1588h-2026** as an approved draft; a final publication date for h was not established. Further amendment projects are listed separately. [IEEE catalog](https://standards.ieee.org/ieee/1588/6825/) |
+| IEEE 754 | **754-2019**, published **2019-07-22**, is active. **P754** is a revision project, not a published replacement. [IEEE catalog and project listing](https://standards.ieee.org/ieee/754/6210/) |
+| FIPS PUB 180-4 | NIST lists the **August 2015** update as the final publication. Its **2023-03-07** decision to revise the standard is a planned revision, not a final replacement. [NIST publication](https://csrc.nist.gov/pubs/fips/180-4/upd1/final), [revision decision](https://csrc.nist.gov/news/2023/decision-to-revise-fips-180-4) |
 
 ## Adding a new edition
 
