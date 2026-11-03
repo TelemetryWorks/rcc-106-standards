@@ -83,6 +83,30 @@ class AuditTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(len(summary["extra_assets"]), 1)
         self.assertEqual(network.call_count, 2)
+        self.assertEqual(summary["downloaded_bytes"], 6)
+        self.assertEqual(summary["unique_remote_blobs"], 1)
+        self.assertEqual(summary["unique_remote_blob_bytes"], 3)
+
+    def test_received_byte_failures_keep_diagnostic_order(self):
+        self.asset.update(size=4, state="new", browser_download_url="https://github.com/wrong")
+        code, summary, _ = self.run_audit(body=b"xyz")
+        self.assertEqual(code, 1)
+        self.assertEqual(summary["failed_records"][0]["failures"], [
+            "size_mismatch", "sha256_mismatch", "size_mismatch",
+            "inventory_url_differs_from_manifest", "asset_not_uploaded"])
+
+    def test_download_error_is_retained_and_fails_summary(self):
+        row = {"asset_id": 1, "bytes": 0, "status": "download_error",
+               "url": self.doc["mirror_url"], "error_type": "OSError",
+               "release": self.doc["edition"], "name": self.doc["asset"]}
+        with mock.patch.object(audit, "download", return_value=row):
+            code, summary, network = self.run_audit()
+        self.assertEqual(code, 1)
+        self.assertEqual(summary["download_statuses"], {"download_error": 1})
+        self.assertEqual(summary["download_evidence_rows"], 1)
+        self.assertIn("download_error", summary["failed_records"][0]["failures"])
+        self.assertEqual(json.loads((self.output / "downloads.jsonl").read_text()), row)
+        network.assert_not_called()
 
     def test_missing_download_evidence_fails(self):
         with mock.patch.object(audit.concurrent.futures.ThreadPoolExecutor, "map", return_value=iter([])):
@@ -120,6 +144,16 @@ class AuditTests(unittest.TestCase):
         (self.output / "downloads.jsonl").write_text("corrupt checkpoint\n")
         with self.assertRaises(SystemExit), mock.patch.object(audit, "download") as download:
             self.run_audit(resume=True)
+        download.assert_not_called()
+
+    def test_malformed_binding_is_controlled_failure_and_preserves_evidence(self):
+        self.run_audit()
+        binding = self.output / "binding.json"
+        binding.write_text("invalid binding JSON\n")
+        with self.assertRaises(SystemExit) as raised, mock.patch.object(audit, "download") as download:
+            self.run_audit(resume=True)
+        self.assertEqual(raised.exception.code, 2)
+        self.assertEqual(binding.read_text(), "invalid binding JSON\n")
         download.assert_not_called()
 
     def test_failed_checkpoint_is_retried(self):
