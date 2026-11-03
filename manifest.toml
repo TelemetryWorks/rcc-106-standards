@@ -12980,3 +12980,67 @@ retrieved = "2026-09-27"
 distribution = "A"
 distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE"
 note = "Byte-different variant of '200-16_IRIG_Serial_Time_Code_Formats.pdf' in this edition; renamed to avoid a filename collision. This copy (www.irig106.org) was created 2016-08-16 and has 64 pages; the TRMC copy was created 2019-05-14 and has 65."
+
+[[document]]
+edition = "rcc-129-25"
+kind = "handbook"
+title = "TmNS Handbook"
+path = "files/rcc-129-25/129-25_TmNS_HDBK.pdf"
+asset = "129-25_TmNS_HDBK.pdf"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-129-25/129-25_TmNS_HDBK.pdf"
+original_urls = ["https://www.trmc.osd.mil/wiki/download/attachments/141656292/129-25_TmNS_HDBK.pdf?api=v2", "https://www.trmc.osd.mil/wiki/download/attachments/141656292/129-25_TmNS_HDBK.pdf?version=1&modificationDate=1740076669105&api=v2"]
+original_filenames = ["129-25_TmNS_HDBK.pdf"]
+sha256 = "210915b20776c2ba494b4ce7514b5a020122de91afd153ed62c2909681b1d894"
+size = 4090347
+pages = 132
+retrieved = "2026-11-02"
+distribution = "A"
+distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE"
+note = "Published February 2025. Updates the handbook examples for MDL 1.2 and explains encapsulated Chapter 11 data in TmNS messages."
+
+[[document]]
+edition = "rcc-129-25"
+kind = "companion"
+title = "TmNS Handbook system-level MDL example"
+path = "files/rcc-129-25/HandbookMasterExample.xml"
+asset = "HandbookMasterExample.xml"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-129-25/HandbookMasterExample.xml"
+original_urls = ["https://www.trmc.osd.mil/wiki/download/attachments/141656292/HandbookMasterExample.xml?api=v2", "https://www.trmc.osd.mil/wiki/download/attachments/141656292/HandbookMasterExample.xml?version=2&modificationDate=1740076681114&api=v2"]
+original_filenames = ["HandbookMasterExample.xml"]
+sha256 = "dfd220b1db90f34f5b005ea950da6204833498a3c64574e85aa7c65ff2f489f8"
+size = 275578
+retrieved = "2026-11-02"
+distribution = "unknown"
+note = "System-level MDL example published with RCC 129-25. TRMC attachment version 2, uploaded 2025-02-20. No distribution marking found in this XML file."
+
+[[document]]
+edition = "106-24R1"
+kind = "companion"
+chapter = "2"
+title = "Band Edge Backoff calculator with C-Band (Excel workbook)"
+path = "files/106-24R1/tmns/Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx"
+asset = "Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/106-24R1/Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx"
+original_urls = ["https://www.trmc.osd.mil/wiki/download/attachments/122454021/Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx?api=v2", "https://www.trmc.osd.mil/wiki/download/attachments/122454021/Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx?version=1&modificationDate=1629726526040&api=v2"]
+original_filenames = ["Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx"]
+sha256 = "e758a20eb4f6ee0af6d88a74b0e94c961ddf3365472264b5d1c9086155ac6196"
+size = 19837
+retrieved = "2026-11-02"
+distribution = "unknown"
+note = "Shared RCC References companion filed with the current 106-24R1 edition; this does not imply a January 2025 publication date. TRMC attachment uploaded 2021-08-23; workbook internal modified date is 2012-05-09. No distribution marking found in the workbook XML. The separately published ZIP contains this exact workbook."
+
+[[document]]
+edition = "106-24R1"
+kind = "companion"
+chapter = "2"
+title = "Band Edge Backoff calculator with C-Band (ZIP bundle)"
+path = "files/106-24R1/tmns/Band_Edge_Backoff_IRIG_Insert_w_CBand.zip"
+asset = "Band_Edge_Backoff_IRIG_Insert_w_CBand.zip"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/106-24R1/Band_Edge_Backoff_IRIG_Insert_w_CBand.zip"
+original_urls = ["https://www.trmc.osd.mil/wiki/download/attachments/122454021/Band_Edge_Backoff_IRIG_Insert_w_CBand.zip?api=v2", "https://www.trmc.osd.mil/wiki/download/attachments/122454021/Band_Edge_Backoff_IRIG_Insert_w_CBand.zip?version=1&modificationDate=1629726526057&api=v2"]
+original_filenames = ["Band_Edge_Backoff_IRIG_Insert_w_CBand.zip"]
+sha256 = "adbe1af1eb9b89b0593a213bfcbc2bc90ee6674e4acd200e34822b16653e0535"
+size = 13299
+retrieved = "2026-11-02"
+distribution = "unknown"
+note = "Shared RCC References companion filed with the current 106-24R1 edition; this does not imply a January 2025 publication date. TRMC attachment uploaded 2021-08-23. Contains the byte-identical Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx workbook, also archived separately. No distribution marking found in the bundled workbook XML."

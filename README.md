@@ -5,7 +5,8 @@ A verified, provenance-preserving mirror of the Range Commanders Council (RCC)
 from 106-59 through the current **106-24 Revision 1** (January 2025), together
 with the companion handbooks **RCC 118** (Test Methods for Telemetry Systems
 and Subsystems), **RCC 119** (Telemetry Applications Handbook), **RCC 123**
-(IRIG 106 Chapter 10 Programmers Handbook), and **RCC 124** (TMATS Handbook);
+(IRIG 106 Chapter 10 Programmers Handbook), **RCC 124** (TMATS Handbook),
+and **RCC 129** (TmNS Handbook);
 the **RCC 200** standard (IRIG Serial Time Code Formats), which Chapter 11
 cites for IRIG time;
 the TMATS, DDML, and IHAL XML schemas; the Telemetry Network Standard
@@ -39,9 +40,10 @@ Python 3.11 or newer, standard library only:
 python scripts/fetch.py --edition 106-24R1              # one edition
 python scripts/fetch.py --chapter 9                     # Chapter 9 of every edition
 python scripts/fetch.py --edition 106-23 --chapter 9    # one chapter
-python scripts/fetch.py --kind handbook                 # RCC 118, 119, 123, 124
+python scripts/fetch.py --kind handbook                 # RCC 118, 119, 123, 124, 129
+python scripts/fetch.py --edition rcc-129-25            # TmNS handbook and MDL example
 python scripts/fetch.py --kind change-marked            # pink sheets and drafts
-python scripts/fetch.py                                 # everything (~970 MiB)
+python scripts/fetch.py                                 # everything (~974 MiB)
 python scripts/fetch.py --verify                        # re-check local copies
 ```
 
@@ -50,7 +52,7 @@ asset directly from the edition's release page.
 
 ## Provenance
 
-Retrieved 2026-09-25 from:
+Retrieved 2026-09-25, with later additions dated in the manifest, from:
 
 - `https://www.irig106.org/docs/` (also served as `ftp.irig106.org`),
 - the TRMC public RCC wiki (`https://www.trmc.osd.mil/wiki/spaces/publicRCC/`),
@@ -104,7 +106,7 @@ licensed under Apache-2.0; that license does not apply to the RCC documents.
 
 `kind` in the manifest is one of: `full` (a whole edition, or its zip
 bundle), `front-matter`, `chapter`, `appendix`, `annex`, `handbook`
-(RCC 118/119/123/124, release tags like `rcc-118-20`), `standard` (other
+(RCC 118/119/123/124/129, release tags like `rcc-118-20`), `standard` (other
 RCC standards that IRIG 106 cites: RCC 200, release tag `rcc-200-16`),
 `schema` (TMATS,
 DDML, IHAL, and MDL XML schemas), `change-marked` (pink sheets and
@@ -118,6 +120,12 @@ release. For the Telemetry Network Standard, irig106.org's
 `23_schema.zip` is the 2017 MDL v1.0.0 in every edition folder, while TRMC's
 copy linked from 106-23 onward is MDL Schema 1.2
 (`106-23/tmns/23_schema__trmc.zip`).
+
+The February 2025 RCC 129-25 TmNS Handbook and its system-level MDL example
+are stored under `rcc-129-25`. The shared Band Edge Backoff calculator with
+C-Band support is stored under `106-24R1/tmns/`, as both the original workbook
+and its byte-preserved ZIP distribution. That filing location does not imply
+a 2025 publication date for the calculator.
 
 ## Standards cited but not mirrored
 

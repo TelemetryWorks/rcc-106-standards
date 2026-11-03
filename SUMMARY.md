@@ -2,9 +2,10 @@
 
 Retrieved 2026-09-25. Sources: www.irig106.org/docs (also served as ftp.irig106.org), www.trmc.osd.mil/wiki publicRCC space (REST attachment listings), and web.archive.org captures of the retired www.wsmr.army.mil/RCCsite for a few items not otherwise available.
 
-**Current archive: 737 files, 1,017,114,520 bytes (970.0 MiB).** This includes
+**Current archive: 741 files, 1,021,513,581 bytes (974.2 MiB).** This includes
 the 472-file base collection below, the 263-file extension, and two RCC 200
-files added on 2026-09-27. The tables below describe those collection stages.
+files added on 2026-09-27, plus four supporting files added on 2026-11-02.
+The tables below describe those collection stages.
 
 ## Base collection
 
@@ -56,7 +57,7 @@ files added on 2026-09-27. The tables below describe those collection stages.
 - **Deduplication.** Byte-identical downloads within an edition were merged into one entry, with all their source URLs in `original_urls`. Different bytes under the same logical name were all kept, because TRMC often hosts a later re-issue while irig106.org has the original. The second copy is named `<name>__irig106org.pdf`, and the `note` gives each copy's PDF creation date. Two schema bundles are byte-identical across editions: `TmatsXMLSchema.zip` for 106-17 through 106-24R1, and `HTML-TMATS.zip` for 106-15 through 106-24R1. They are stored once per edition so each edition folder is self-contained, and the `note` records the duplication.
 - **Distribution.** `distribution = "A"` is set only when "DISTRIBUTION A" or "APPROVED FOR PUBLIC RELEASE" was found in the file text. For five scanned full editions (106-00, 106-86, 106-93, 106-96, 106-99), the marking was instead confirmed visually on a rendered cover image, and the `note` says so. Individual chapter, appendix and annex files before 106-20 carry no marking themselves, so they are "unknown", although their edition's front matter or full document is marked A. Schema and ZIP files are "unknown" because they carry no marking.
 - **Surprises in the TRMC "106 Previous Versions" set.** 106-59 is "IRIG System Standards for C-Band (5 CM) Instrumentation Radars and Beacons", and 106-64 is "Radio Frequency Sources at the National and Service Test Ranges" (an FCWG document). The file published as 106-62.pdf is a 1961 TCWG "Plan for Global Timing Synchronization". None of these three is a telemetry standard. There is no edition newer than 106-24R1 on either site as of 2026-09-25.
-- **Collection scope.** The extension below adds RCC 118/119, DDML/IHAL schemas, TmNS companion files, and change-marked documents, including the 106-19 Chapter 9 pink sheet and TG-150 letter. These are archived. BandEdgeBackoff spreadsheets, the 106-05/106-07 HTML renditions, RCC 120/121/125/126/127/128/129, and other RCC documents remain outside this collection. RCC 200 was added separately on 2026-09-27.
+- **Collection scope.** The extension below adds RCC 118/119, DDML/IHAL schemas, TmNS companion files, and change-marked documents, including the 106-19 Chapter 9 pink sheet and TG-150 letter. These are archived. Older per-edition BandEdgeBackoff spreadsheets, the 106-05/106-07 HTML renditions, RCC 120/121/125/126/127/128, RCC 129-22, and other RCC documents remain outside this collection. The 2026-11-02 addition below includes RCC 129-25 and the shared Band Edge Backoff calculator with C-Band support. RCC 200 was added separately on 2026-09-27.
 
 ---
 
@@ -119,7 +120,7 @@ Sources:
   - `.../106-09/Chap_9_web.pdf` and `.../106-10/Chap10_v2.pdf` (2007).
   - `irig106.org/docs/106-17/chapter27_orig.pdf` (Wayback 2024).
   - BandEdgeBackoff spreadsheets (106-07, 106-09, 106-11 and 106-15).
-  - RCC 126/127/128/129 documents and their drafts (TG-136 and TG-142 letters).
+  - RCC 126/127/128 documents, RCC 129-22, and associated drafts (TG-136 and TG-142 letters). RCC 129-25 is included in the addition below.
   - irig106.org `/downloads/Ch10Tools_v*.exe`.
 
 ---
@@ -137,3 +138,33 @@ are kept under the release `rcc-200-16`, kind `standard`:
 |---|---|---|---|---|---|
 | 200-16_IRIG_Serial_Time_Code_Formats.pdf | www.trmc.osd.mil | 2019-05-14 | 65 | 1,068,587 | yes |
 | 200-16_IRIG_Serial_Time_Code_Formats__irig106org.pdf | www.irig106.org | 2016-08-16 | 64 | 877,586 | yes |
+
+---
+
+## Addition: TmNS handbook and Band Edge Backoff calculator (2026-11-02)
+
+Four files, **4,399,061 bytes (4.2 MiB)**, retrieved from the TRMC Public RCC
+wiki. The manifest retains both the live attachment URLs and version-pinned
+URLs, verified to return identical bytes.
+
+| Edition | File | Kind | Bytes | Distribution |
+|---|---|---|---|---|
+| rcc-129-25 | 129-25_TmNS_HDBK.pdf | handbook | 4,090,347 | A |
+| rcc-129-25 | HandbookMasterExample.xml | companion | 275,578 | unknown |
+| 106-24R1 | Band_Edge_Backoff_IRIG_Insert_w_CBand.xlsx | companion | 19,837 | unknown |
+| 106-24R1 | Band_Edge_Backoff_IRIG_Insert_w_CBand.zip | companion | 13,299 | unknown |
+
+- **RCC 129-25.** Published February 2025, 132 pages. The handbook updates
+  examples for MDL 1.2 and explains encapsulated Chapter 11 data in TmNS
+  messages. The PDF visibly carries the Distribution A marking. The companion
+  XML is TRMC attachment version 2, uploaded 2025-02-20; no distribution
+  marking appears in the XML itself.
+- **Calculator.** The shared References attachments were uploaded 2021-08-23;
+  the workbook's internal modified date is 2012-05-09. Their placement under
+  106-24R1 identifies the current edition's companion collection, not a new
+  calculator publication date. The ZIP contains the exact same workbook as
+  the standalone download. Both original distributions are preserved. No
+  distribution marking appears in the workbook XML.
+
+Sources: [RCC 129 TmNS Handbook](https://www.trmc.osd.mil/wiki/pages/viewpage.action?pageId=141656292)
+and [RCC References](https://www.trmc.osd.mil/wiki/pages/viewpage.action?pageId=122454021).
