@@ -4,6 +4,7 @@ import contextlib
 import copy
 import hashlib
 import io
+import json
 import pathlib
 import tempfile
 import unittest
@@ -113,6 +114,49 @@ class ManifestTests(unittest.TestCase):
             self.assertEqual(validator.main(["--manifest", str(path)]), 1)
             path.write_text("document = []")
             self.assertEqual(validator.main(["--manifest", str(path)]), 1)
+
+    def test_malformed_tables_do_not_reserve_identity(self):
+        malformed = {**document(), "size": "not an integer"}
+        errors = validator.validate({"document": [None, malformed, document()]})
+        self.assertEqual(errors, ["document[0]: must be a table",
+                                  "document[1].size: expected positive integer"])
+
+    def test_semantic_errors_preserve_identity_checks_and_diagnostic_order(self):
+        invalid = {**document(), "kind": "unsupported", "retrieved": "2026-02-30"}
+        errors = validator.validate({"document": [invalid, document()]})
+        self.assertEqual(errors, ["document[0].kind: unrecognized document kind",
+                                  "document[0].retrieved: expected YYYY-MM-DD date",
+                                  "document[1]: duplicate path or edition/asset pair"])
+
+    def test_structural_errors_prevent_unsafe_semantic_operations(self):
+        invalid = {**document(), "sha256": [], "size": "bad", "retrieved": None}
+        errors = validator.validate({"document": [invalid]})
+        self.assertEqual(errors, ["document[0].retrieved: required nonempty string",
+                                  "document[0].sha256: required nonempty string",
+                                  "document[0].size: expected positive integer"])
+
+    def test_explicit_local_input_files_can_be_outside_repository(self):
+        with tempfile.TemporaryDirectory() as temp, contextlib.redirect_stdout(io.StringIO()):
+            root = pathlib.Path(temp)
+            doc = document()
+            manifest = root / "selected.toml"
+            manifest.write_text("[[document]]\n" + "\n".join(
+                f"{key} = {json.dumps(value)}" for key, value in doc.items()))
+            inventory = root / "selected.json"
+            inventory.write_text(json.dumps([{"tag": doc["edition"], "assets": [{
+                "name": doc["asset"], "size": doc["size"], "state": "uploaded",
+                "browser_download_url": doc["mirror_url"]}]}]))
+            self.assertEqual(validator.main(["--manifest", str(manifest),
+                                             "--inventory", str(inventory)]), 0)
+
+    def test_malformed_input_does_not_echo_file_contents(self):
+        with tempfile.TemporaryDirectory() as temp:
+            manifest = pathlib.Path(temp) / "selected.toml"
+            manifest.write_text("SECRET_FIXTURE_CONTENT [not toml")
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                self.assertEqual(validator.main(["--manifest", str(manifest)]), 1)
+            self.assertNotIn("SECRET_FIXTURE_CONTENT", stderr.getvalue())
 
 
 if __name__ == "__main__":
