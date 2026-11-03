@@ -105,48 +105,29 @@ def download(task):
     return result
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=pathlib.Path,
-                        default=ROOT / "files/audits" / now()[:10])
-    parser.add_argument("--resume", action="store_true")
-    args = parser.parse_args()
-    output = args.output.resolve()
-    output.mkdir(parents=True, exist_ok=True)
-    manifest = (ROOT / "manifest.toml").read_bytes()
-    try:
-        docs = parse_manifest(manifest)
-    except ValueError as exc:
-        parser.error(str(exc))
-    manifest_sha = hashlib.sha256(manifest).hexdigest()
-    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()
-    print("Enumerating all release assets (two inventory workers)...", flush=True)
-    initial = inventory()
-    inventory_sha = digest(initial)
-    binding = {"manifest_sha256": manifest_sha, "inventory_sha256": inventory_sha}
+def load_checkpoints(output, binding, resume):
     checkpoints = output / "downloads.jsonl"
     completed = {}
-    if checkpoints.exists():
-        if not args.resume:
-            parser.error("Evidence already exists; use --resume or a new --output")
-        if json.loads((output / "binding.json").read_text()) != binding:
-            parser.error("Audit inputs changed")
-        for line in checkpoints.read_text().splitlines():
-            try:
-                row = json.loads(line)
-            except json.JSONDecodeError:
-                parser.error("Malformed checkpoint row; preserve evidence and use a new --output")
-            if row["status"] == "downloaded":
-                completed[row["asset_id"]] = row
-    write_json(output / "binding.json", binding)
-    write_json(output / "inventory-before.json", initial)
-    tasks = [(r["tag"], a) for r in initial for a in r["assets"]]
-    free = shutil.disk_usage(output).free
-    print(f"{len(docs)} records; {len(initial)} releases; {len(tasks)} assets; "
-          f"{free:,} free disk bytes; {len(completed)} reusable checkpoints", flush=True)
+    if not checkpoints.exists():
+        return completed
+    if not resume:
+        raise ValueError("Evidence already exists; use --resume or a new --output")
+    if json.loads((output / "binding.json").read_text()) != binding:
+        raise ValueError("Audit inputs changed")
+    for line in checkpoints.read_text().splitlines():
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ValueError("Malformed checkpoint row; preserve evidence and use a new --output") from exc
+        if row["status"] == "downloaded":
+            completed[row["asset_id"]] = row
+    return completed
+
+
+def collect_downloads(tasks, completed, output):
     pending = [t for t in tasks if t[1]["id"] not in completed]
     rows = dict(completed)
-    with checkpoints.open("ab") as log, concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+    with (output / "downloads.jsonl").open("ab") as log, concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
         for row in pool.map(download, pending):
             log.write(canonical(row) + b"\n")
             log.flush()
@@ -154,9 +135,41 @@ def main():
             if len(rows) % 25 == 0 or row["status"] != "downloaded":
                 print(f"{len(rows)}/{len(tasks)}: {row['status']} "
                       f"{row['release']}/{row['name']}", flush=True)
-    print("Re-enumerating release inventories to detect concurrent asset changes...", flush=True)
-    final = inventory()
-    write_json(output / "inventory-after.json", final)
+    return rows
+
+
+def mapping_failures(doc, paths, keys):
+    failures = []
+    parsed = urllib.parse.urlsplit(doc["mirror_url"])
+    expected_path = f"/{REPO}/releases/download/{doc['edition']}/{doc['asset']}"
+    if parsed.scheme != "https" or parsed.netloc != "github.com" or urllib.parse.unquote(parsed.path) != expected_path or parsed.query or parsed.fragment:
+        failures.append("incorrect_mirror_url")
+    local_path = pathlib.PurePosixPath(doc["path"])
+    if local_path.is_absolute() or ".." in local_path.parts or local_path.parts[0] != "files":
+        failures.append("unsafe_local_path")
+    if paths[doc["path"]] != 1 or keys[doc["edition"], doc["asset"]] != 1:
+        failures.append("duplicate_manifest_path_or_asset")
+    return failures
+
+
+def received_byte_failures(doc, matches, row):
+    if row is None:
+        return ["missing_download_evidence"] if len(matches) == 1 else []
+    failures = []
+    if row["status"] != "downloaded":
+        failures.append(row["status"])
+    if row.get("sha256") != doc["sha256"]:
+        failures.append("sha256_mismatch")
+    if row["bytes"] != doc["size"] or matches[0]["size"] != doc["size"]:
+        failures.append("size_mismatch")
+    if row["url"] != doc["mirror_url"]:
+        failures.append("inventory_url_differs_from_manifest")
+    if matches[0]["state"] != "uploaded":
+        failures.append("asset_not_uploaded")
+    return failures
+
+
+def reconcile_records(docs, tasks, rows):
     by_key = collections.defaultdict(list)
     for tag, asset in tasks:
         by_key[tag, asset["name"]].append(asset)
@@ -170,62 +183,88 @@ def main():
         failures = []
         if len(matches) != 1:
             failures.append("missing_asset" if not matches else "duplicate_asset")
-        parsed = urllib.parse.urlsplit(doc["mirror_url"])
-        expected_path = f"/{REPO}/releases/download/{doc['edition']}/{doc['asset']}"
-        if parsed.scheme != "https" or parsed.netloc != "github.com" or urllib.parse.unquote(parsed.path) != expected_path or parsed.query or parsed.fragment:
-            failures.append("incorrect_mirror_url")
-        local_path = pathlib.PurePosixPath(doc["path"])
-        if local_path.is_absolute() or ".." in local_path.parts or local_path.parts[0] != "files":
-            failures.append("unsafe_local_path")
-        if paths[doc["path"]] != 1 or keys[key] != 1:
-            failures.append("duplicate_manifest_path_or_asset")
+        failures.extend(mapping_failures(doc, paths, keys))
         row = rows.get(matches[0]["id"]) if len(matches) == 1 else None
-        if len(matches) == 1 and row is None:
-            failures.append("missing_download_evidence")
-        if row:
-            if row["status"] != "downloaded":
-                failures.append(row["status"])
-            if row.get("sha256") != doc["sha256"]:
-                failures.append("sha256_mismatch")
-            if row["bytes"] != doc["size"] or matches[0]["size"] != doc["size"]:
-                failures.append("size_mismatch")
-            if row["url"] != doc["mirror_url"]:
-                failures.append("inventory_url_differs_from_manifest")
-            if matches[0]["state"] != "uploaded":
-                failures.append("asset_not_uploaded")
+        failures.extend(received_byte_failures(doc, matches, row))
         records.append({"index": index, "edition": doc["edition"], "asset": doc["asset"],
                         "path": doc["path"], "expected_size": doc["size"],
                         "expected_sha256": doc["sha256"], "asset_id": row["asset_id"] if row else None,
-                        "local_filename_differs": local_path.name != doc["asset"],
+                        "local_filename_differs": pathlib.PurePosixPath(doc["path"]).name != doc["asset"],
                         "status": "FAIL" if failures else "PASS", "failures": failures})
-    extras = [{"release": tag, **asset} for tag, asset in tasks if (tag, asset["name"]) not in expected]
+    return {"records": records,
+            "extra_assets": [{"release": tag, **a} for tag, a in tasks if (tag, a["name"]) not in expected],
+            "duplicate_release_asset_names": [list(k) for k, v in by_key.items() if len(v) > 1]}
+
+
+def build_summary(docs, initial, final, rows, reconciliation, metadata):
+    records = reconciliation["records"]
+    tasks = [(r["tag"], a) for r in initial for a in r["assets"]]
     unique = {d["sha256"]: d["size"] for d in docs}
     remote_unique = {r["sha256"]: r["bytes"] for r in rows.values() if r["status"] == "downloaded"}
     digest_mismatches = [a["id"] for _, a in tasks if a.get("digest") and
                          a["digest"] != "sha256:" + rows.get(a["id"], {}).get("sha256", "")]
-    summary = {"completed": now(), "manifest_commit": commit, **binding,
-               "inventory_unchanged": initial == final, "disk_free_before_bytes": free,
+    return {**metadata, "inventory_unchanged": initial == final,
                "records": len(docs), "record_bytes": sum(d["size"] for d in docs),
                "unique_manifest_blobs": len(unique), "unique_manifest_blob_bytes": sum(unique.values()),
                "unique_remote_blobs": len(remote_unique), "unique_remote_blob_bytes": sum(remote_unique.values()),
                "github_digest_mismatches": digest_mismatches,
                "local_filename_mappings": sum(r["local_filename_differs"] for r in records),
-               "reused_checkpoints": len(completed),
-               "releases": len(initial), "assets": len(tasks), "extra_assets": extras,
+               "releases": len(initial), "assets": len(tasks), "extra_assets": reconciliation["extra_assets"],
                "download_evidence_rows": len(rows),
                "missing_download_asset_ids": [a["id"] for _, a in tasks if a["id"] not in rows],
-               "duplicate_release_asset_names": [list(k) for k, v in by_key.items() if len(v) > 1],
+               "duplicate_release_asset_names": reconciliation["duplicate_release_asset_names"],
                "download_statuses": dict(collections.Counter(r["status"] for r in rows.values())),
                "downloaded_bytes": sum(r["bytes"] for r in rows.values()),
                "passing_records": sum(r["status"] == "PASS" for r in records),
                "failed_records": [r for r in records if r["status"] != "PASS"]}
-    write_json(output / "records.json", records)
+
+
+def audit_failed(summary):
+    return int(bool(summary["failed_records"]) or bool(summary["extra_assets"]) or
+               bool(summary["duplicate_release_asset_names"]) or bool(summary["missing_download_asset_ids"]) or
+               bool(summary["github_digest_mismatches"]) or not summary["inventory_unchanged"] or
+               any(status != "downloaded" for status in summary["download_statuses"]))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=pathlib.Path,
+                        default=ROOT / "files/audits" / now()[:10])
+    parser.add_argument("--resume", action="store_true")
+    args = parser.parse_args()
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    manifest = (ROOT / "manifest.toml").read_bytes()
+    try:
+        docs = parse_manifest(manifest)
+    except ValueError as exc:
+        parser.error(str(exc))
+    commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip()
+    print("Enumerating all release assets (two inventory workers)...", flush=True)
+    initial = inventory()
+    binding = {"manifest_sha256": hashlib.sha256(manifest).hexdigest(), "inventory_sha256": digest(initial)}
+    try:
+        completed = load_checkpoints(output, binding, args.resume)
+    except ValueError as exc:
+        parser.error(str(exc))
+    write_json(output / "binding.json", binding)
+    write_json(output / "inventory-before.json", initial)
+    tasks = [(r["tag"], a) for r in initial for a in r["assets"]]
+    free = shutil.disk_usage(output).free
+    print(f"{len(docs)} records; {len(initial)} releases; {len(tasks)} assets; "
+          f"{free:,} free disk bytes; {len(completed)} reusable checkpoints", flush=True)
+    rows = collect_downloads(tasks, completed, output)
+    print("Re-enumerating release inventories to detect concurrent asset changes...", flush=True)
+    final = inventory()
+    write_json(output / "inventory-after.json", final)
+    reconciliation = reconcile_records(docs, tasks, rows)
+    metadata = {"completed": now(), "manifest_commit": commit, **binding,
+                "disk_free_before_bytes": free, "reused_checkpoints": len(completed)}
+    summary = build_summary(docs, initial, final, rows, reconciliation, metadata)
+    write_json(output / "records.json", reconciliation["records"])
     write_json(output / "summary.json", summary)
     print(json.dumps(summary, indent=2), flush=True)
-    return int(bool(summary["failed_records"]) or bool(extras) or
-               bool(summary["duplicate_release_asset_names"]) or bool(summary["missing_download_asset_ids"]) or
-               bool(digest_mismatches) or not summary["inventory_unchanged"] or
-               any(r["status"] != "downloaded" for r in rows.values()))
+    return audit_failed(summary)
 
 
 if __name__ == "__main__":
