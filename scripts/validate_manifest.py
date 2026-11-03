@@ -43,6 +43,87 @@ def source_url(value):
         return False
 
 
+def text_errors(doc, prefix):
+    errors = []
+    for field in sorted(TEXT):
+        if not isinstance(doc.get(field), str) or not doc[field].strip():
+            errors.append(f"{prefix}.{field}: required nonempty string")
+    for field in sorted(OPTIONAL_TEXT & doc.keys()):
+        if not isinstance(doc[field], str) or not doc[field].strip():
+            errors.append(f"{prefix}.{field}: expected nonempty string")
+    return errors
+
+
+def source_errors(doc, prefix):
+    errors = []
+    fields = ["original_urls", "original_filenames"]
+    if "archived_from" in doc:
+        fields.append("archived_from")
+    for field in fields:
+        values = doc.get(field)
+        if not isinstance(values, list) or not values or not all(isinstance(v, str) and v.strip() for v in values):
+            errors.append(f"{prefix}.{field}: required nonempty array of nonempty strings")
+        elif field != "original_filenames" and not all(source_url(v) for v in values):
+            errors.append(f"{prefix}.{field}: expected HTTP(S) URLs without credentials or whitespace")
+    return errors
+
+
+def number_errors(doc, prefix):
+    errors = []
+    for field in ["size", *(["pages"] if "pages" in doc else [])]:
+        if type(doc.get(field)) is not int or doc[field] <= 0:
+            errors.append(f"{prefix}.{field}: expected positive integer")
+    return errors
+
+
+def metadata_errors(doc, prefix):
+    errors = []
+    if doc["kind"] not in KINDS:
+        errors.append(f"{prefix}.kind: unrecognized document kind")
+    if not re.fullmatch(r"[0-9a-f]{64}", doc["sha256"]):
+        errors.append(f"{prefix}.sha256: expected 64 lowercase hexadecimal characters")
+    for field in ["retrieved", *(["pdf_created"] if "pdf_created" in doc else [])]:
+        try:
+            if datetime.date.fromisoformat(doc[field]).isoformat() != doc[field]:
+                raise ValueError
+        except ValueError:
+            errors.append(f"{prefix}.{field}: expected YYYY-MM-DD date")
+    if doc["distribution"] not in {"A", "unknown"}:
+        errors.append(f"{prefix}.distribution: expected A or unknown")
+    if doc["distribution"] == "A" and not doc.get("distribution_text") and not doc.get("note"):
+        errors.append(f"{prefix}.distribution: A needs distribution_text or a note recording evidence")
+    return errors
+
+
+def path_errors(doc, prefix):
+    errors = []
+    for field in ["edition", "asset"]:
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", doc[field]) or not safe_component(doc[field]):
+            errors.append(f"{prefix}.{field}: expected safe release tag or asset name")
+    parts = doc["path"].split("/")
+    if len(parts) < 3 or parts[0] != "files" or not all(safe_component(p) for p in parts):
+        errors.append(f"{prefix}.path: expected safe relative path under files/")
+    return errors
+
+
+def identity_errors(doc, prefix, paths, keys, blobs):
+    errors = []
+    # Case-folding catches collisions when the same archive is fetched on Windows.
+    path_key = doc["path"].casefold()
+    asset_key = (doc["edition"].casefold(), doc["asset"].casefold())
+    if path_key in paths or asset_key in keys:
+        errors.append(f"{prefix}: duplicate path or edition/asset pair")
+    paths.add(path_key)
+    keys.add(asset_key)
+    expected = f"https://github.com/{REPO}/releases/download/{doc['edition']}/{doc['asset']}"
+    if doc["mirror_url"] != expected:
+        errors.append(f"{prefix}.mirror_url: repository, release and asset must match identity")
+    if doc["sha256"] in blobs and blobs[doc["sha256"]] != doc["size"]:
+        errors.append(f"{prefix}.size: identical hashes must have identical sizes")
+    blobs[doc["sha256"]] = doc["size"]
+    return errors
+
+
 def validate(data):
     errors = []
     docs = data.get("document") if isinstance(data, dict) else None
@@ -54,57 +135,13 @@ def validate(data):
         if not isinstance(doc, dict):
             errors.append(f"{prefix}: must be a table")
             continue
-        before = len(errors)
-        for field in sorted(TEXT):
-            if not isinstance(doc.get(field), str) or not doc[field].strip():
-                errors.append(f"{prefix}.{field}: required nonempty string")
-        for field in sorted(OPTIONAL_TEXT & doc.keys()):
-            if not isinstance(doc[field], str) or not doc[field].strip():
-                errors.append(f"{prefix}.{field}: expected nonempty string")
-        for field in ["original_urls", "original_filenames", *(["archived_from"] if "archived_from" in doc else [])]:
-            values = doc.get(field)
-            if not isinstance(values, list) or not values or not all(isinstance(v, str) and v.strip() for v in values):
-                errors.append(f"{prefix}.{field}: required nonempty array of nonempty strings")
-            elif field != "original_filenames" and not all(source_url(v) for v in values):
-                errors.append(f"{prefix}.{field}: expected HTTP(S) URLs without credentials or whitespace")
-        for field in ["size", *(["pages"] if "pages" in doc else [])]:
-            if type(doc.get(field)) is not int or doc[field] <= 0:
-                errors.append(f"{prefix}.{field}: expected positive integer")
-        if len(errors) != before:
+        structural = text_errors(doc, prefix) + source_errors(doc, prefix) + number_errors(doc, prefix)
+        if structural:
+            errors.extend(structural)
             continue
-        if doc["kind"] not in KINDS:
-            errors.append(f"{prefix}.kind: unrecognized document kind")
-        if not re.fullmatch(r"[0-9a-f]{64}", doc["sha256"]):
-            errors.append(f"{prefix}.sha256: expected 64 lowercase hexadecimal characters")
-        for field in ["retrieved", *(["pdf_created"] if "pdf_created" in doc else [])]:
-            try:
-                if datetime.date.fromisoformat(doc[field]).isoformat() != doc[field]:
-                    raise ValueError
-            except ValueError:
-                errors.append(f"{prefix}.{field}: expected YYYY-MM-DD date")
-        if doc["distribution"] not in {"A", "unknown"}:
-            errors.append(f"{prefix}.distribution: expected A or unknown")
-        if doc["distribution"] == "A" and not doc.get("distribution_text") and not doc.get("note"):
-            errors.append(f"{prefix}.distribution: A needs distribution_text or a note recording evidence")
-        for field in ["edition", "asset"]:
-            if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", doc[field]) or not safe_component(doc[field]):
-                errors.append(f"{prefix}.{field}: expected safe release tag or asset name")
-        parts = doc["path"].split("/")
-        if len(parts) < 3 or parts[0] != "files" or not all(safe_component(p) for p in parts):
-            errors.append(f"{prefix}.path: expected safe relative path under files/")
-        # Case-folding catches collisions when the same archive is fetched on Windows.
-        path_key = doc["path"].casefold()
-        asset_key = (doc["edition"].casefold(), doc["asset"].casefold())
-        if path_key in paths or asset_key in keys:
-            errors.append(f"{prefix}: duplicate path or edition/asset pair")
-        paths.add(path_key)
-        keys.add(asset_key)
-        expected = f"https://github.com/{REPO}/releases/download/{doc['edition']}/{doc['asset']}"
-        if doc["mirror_url"] != expected:
-            errors.append(f"{prefix}.mirror_url: repository, release and asset must match identity")
-        if doc["sha256"] in blobs and blobs[doc["sha256"]] != doc["size"]:
-            errors.append(f"{prefix}.size: identical hashes must have identical sizes")
-        blobs[doc["sha256"]] = doc["size"]
+        errors.extend(metadata_errors(doc, prefix))
+        errors.extend(path_errors(doc, prefix))
+        errors.extend(identity_errors(doc, prefix, paths, keys, blobs))
     return errors
 
 
