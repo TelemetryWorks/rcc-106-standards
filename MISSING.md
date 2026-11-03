@@ -32,7 +32,7 @@ These items are believed to exist, or were linked from a source, but no valid co
 
 ## Extension: believed to exist but not retrieved
 
-Retrieved 2026-09-25. Every item below is absent from `manifest.toml`, and each entry lists the URLs that were tried.
+Investigated 2026-09-25, with the MDL version 1 source rechecked on 2026-11-02. This section lists missing documents, unavailable source variants, and copies recovered elsewhere. Each entry states what is archived and which source remains unavailable.
 
 ### RCC 118 / 119
 
@@ -43,7 +43,6 @@ Retrieved 2026-09-25. Every item below is absent from `manifest.toml`, and each 
 - **Earlier TRMC attachment versions** (the `?version=1` downloads) returned HTTP 404:
   - https://www.trmc.osd.mil/wiki/download/attachments/113019781/118-17v6_Aut_Test_XML_Met.pdf?version=1&api=v2
   - https://www.trmc.osd.mil/wiki/download/attachments/113019799/123-20_IRIG_106_Chapter10_Programmers_Handbook.pdf?version=1&api=v2
-  - https://www.trmc.osd.mil/wiki/download/attachments/122454021/23_schema.zip?version=1&api=v2
 - **Truncated or invalid Wayback captures (rejected).** Each of these returned exactly 1,048,576 bytes and failed pdfinfo. A complete copy of each document was archived from another source.
   - https://web.archive.org/web/20210120045435id_/https://www.wsmr.army.mil/RCCsite/Documents/118-20-V1_Test_Methods_Vehicle_TM_Systems/118-20_V1_Vehicle_TM_Systems.pdf
   - https://web.archive.org/web/20210301192311id_/https://www.wsmr.army.mil/RCCsite/Documents/118-20-V5_Test_Digital_Recorder_Reproducers/118-20_Test_Methods_TM_Systems_and_Subsystems_V5.pdf. This is a different file from the TRMC 118-20 V5, but a complete 2020-10 copy was captured at the same URL on 20210822 and is archived.
@@ -78,6 +77,8 @@ Retrieved 2026-09-25. Every item below is absent from `manifest.toml`, and each 
   - https://web.archive.org/web/20161231095748id_/http://www.irig106.org:80/docs/106_Part_II/Chapter_27_AppendixB2_RANS.xlsx. The WSMR "Draft Documents" copy of this file was retrieved and is archived.
 
 ### TmNS companion files
+
+- **Resolved: TRMC MDL schema version 1.** The [version 1 URL](https://www.trmc.osd.mil/wiki/download/attachments/122454021/23_schema.zip?version=1&api=v2), previously reported as HTTP 404, returned the archived 385,236-byte MDL v1.0.0 bundle on 2026-11-02. Its SHA-256 is `5e1da6ac155fe5bc8c9878637b25ed77f8d711073b19e2cd9f178d30c6cda08e`, matching `23_schema.zip` under 106-17 through 106-24R1. The newer MDL 1.2 bundle is archived separately under 106-23 as `23_schema__trmc.zip`.
 
 - **Truncated Wayback captures of ManagementResourceMatrix.json** (1,048,576 bytes, invalid JSON) were rejected. The complete live irig106.org copy is archived for every edition.
   - https://web.archive.org/web/20210618172040id_/https://www.irig106.org/docs/106-17/ManagementResourceMatrix.json, plus the same file under 106-19 (20190923), 106-20 (20201203) and 106-22 (20220707).

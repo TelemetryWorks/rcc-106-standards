@@ -2,6 +2,12 @@
 
 Retrieved 2026-09-25. Sources: www.irig106.org/docs (also served as ftp.irig106.org), www.trmc.osd.mil/wiki publicRCC space (REST attachment listings), and web.archive.org captures of the retired www.wsmr.army.mil/RCCsite for a few items not otherwise available.
 
+**Current archive: 737 files, 1,017,114,520 bytes (970.0 MiB).** This includes
+the 472-file base collection below, the 263-file extension, and two RCC 200
+files added on 2026-09-27. The tables below describe those collection stages.
+
+## Base collection
+
 | Edition | Full | Part II | Front matter | Chapters | Appendixes | Annexes | Handbook | Schema | Files | Bytes | Dist. A marked |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 106-59 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 2,849,382 | 0/1 |
@@ -41,7 +47,7 @@ Retrieved 2026-09-25. Sources: www.irig106.org/docs (also served as ftp.irig106.
 | rcc-124-19 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 3,015,139 | 1/1 |
 | rcc-124-22 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 1 | 3,621,604 | 1/1 |
 
-**Total: 472 files, 745,183,334 bytes (710.7 MiB).**
+**Base collection subtotal: 472 files, 745,183,334 bytes (710.7 MiB).**
 
 ## Notes
 
@@ -50,7 +56,7 @@ Retrieved 2026-09-25. Sources: www.irig106.org/docs (also served as ftp.irig106.
 - **Deduplication.** Byte-identical downloads within an edition were merged into one entry, with all their source URLs in `original_urls`. Different bytes under the same logical name were all kept, because TRMC often hosts a later re-issue while irig106.org has the original. The second copy is named `<name>__irig106org.pdf`, and the `note` gives each copy's PDF creation date. Two schema bundles are byte-identical across editions: `TmatsXMLSchema.zip` for 106-17 through 106-24R1, and `HTML-TMATS.zip` for 106-15 through 106-24R1. They are stored once per edition so each edition folder is self-contained, and the `note` records the duplication.
 - **Distribution.** `distribution = "A"` is set only when "DISTRIBUTION A" or "APPROVED FOR PUBLIC RELEASE" was found in the file text. For five scanned full editions (106-00, 106-86, 106-93, 106-96, 106-99), the marking was instead confirmed visually on a rendered cover image, and the `note` says so. Individual chapter, appendix and annex files before 106-20 carry no marking themselves, so they are "unknown", although their edition's front matter or full document is marked A. Schema and ZIP files are "unknown" because they carry no marking.
 - **Surprises in the TRMC "106 Previous Versions" set.** 106-59 is "IRIG System Standards for C-Band (5 CM) Instrumentation Radars and Beacons", and 106-64 is "Radio Frequency Sources at the National and Service Test Ranges" (an FCWG document). The file published as 106-62.pdf is a 1961 TCWG "Plan for Global Timing Synchronization". None of these three is a telemetry standard. There is no edition newer than 106-24R1 on either site as of 2026-09-25.
-- **Deliberately out of scope (not archived).** These are the TmNS companion files on irig106.org and TRMC (ManagementResourceMatrix.*, MDL_Examples.zip, MDL_Relationships.zip, MRM_Tools.zip, 23_schema.zip, CH_25_TMNS.zip, RAN/TmNS calculators, TSS_Reference_Applications.zip), the DDML/IHAL schema bundles, BandEdgeBackoff spreadsheets, the 106-19 "Chapter9-2019 PinkSheet.docx" / "TG-150 Pink Sheet Letter.docx", the 106-05/106-07 HTML renditions, and RCC 118/119/120/121/126 and other RCC documents.
+- **Collection scope.** The extension below adds RCC 118/119, DDML/IHAL schemas, TmNS companion files, and change-marked documents, including the 106-19 Chapter 9 pink sheet and TG-150 letter. These are archived. BandEdgeBackoff spreadsheets, the 106-05/106-07 HTML renditions, RCC 120/121/125/126/127/128/129, and other RCC documents remain outside this collection. RCC 200 was added separately on 2026-09-27.
 
 ---
 
@@ -97,7 +103,7 @@ Sources:
   - DDML 3.0 is archived for 106-07 (`ddml30.xml`) and DDML 3.1 for 106-09 and 106-11 (`ddml31.xsd`, byte-identical in both).
   - 106-13 has the DDML_schemas.zip, IHAL_106-13_Schema_Final.zip and IHAL HTML documentation zips, plus 2012 draft DDML XSDs.
   - 106-15 has the full set from the TRMC "References/ddml" and "References/ihal" pages. Those files carry 106-15 namespaces, "IHAL Version 106-15" and "Changes in 106-15". Chapter 9 of 106-17 through 106-24R1 links to that same shared set, so it is stored once, under 106-15.
-- **TmNS.** The per-edition folders on irig106.org (106-17 through 106-24R1) were archived. Excluded as HTML renditions: ManagementResourceMatrix.html, ManagementResourceMatrix-js.html (28 MB) and ManagementResourceMatrix-dynamic/*. TRMC and WSMR "References" copies were merged into `original_urls` wherever the bytes are identical. **Surprise:** every irig106.org folder, including 106-23, 106-24 and 106-24R1, carries the 2017 MDL v1.0.0 `23_schema.zip`. The TRMC version, updated 2023-09-01 and linked from 106-23+ Chapter 23, is **MDL Schema 1.2**. It is archived as `files/106-23/tmns/23_schema__trmc.zip`. Apart from 23_schema.zip, the companion files are byte-identical across all seven editions.
+- **TmNS.** The per-edition folders on irig106.org (106-17 through 106-24R1) were archived. Excluded as HTML renditions: ManagementResourceMatrix.html, ManagementResourceMatrix-js.html (28 MB) and ManagementResourceMatrix-dynamic/*. TRMC and WSMR "References" copies were merged into `original_urls` wherever the bytes are identical. **Surprise:** every irig106.org folder, including 106-23, 106-24 and 106-24R1, carries the 2017 MDL v1.0.0 `23_schema.zip`. The TRMC version, updated 2023-09-01 and linked from 106-23+ Chapter 23, is **MDL Schema 1.2**. It is archived as `files/106-23/tmns/23_schema__trmc.zip`. The older TRMC version 1 URL was rechecked on 2026-11-02 and returns the same MDL v1.0.0 bytes as irig106.org; both versions are archived. Apart from 23_schema.zip, the companion files are byte-identical across all seven editions.
 - **Change-marked documents.** These include the 106-19 Chapter 9 pink sheet and the TG-150 letter. Earlier review material comes from WSMR and wsmrc2vger captures:
   - 106-07: the 2006 Chapter 10 pink sheet.
   - 106-11: a Chapter 10 pink sheet.
