@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-11-05T04:15:14.108287+00:00",
+  "manual_audit": {
+    "run_id": 41965582867,
+    "commit": "470638cf66cd3fcd10c017e40556367aea1cfbee",
+    "run_url": "https://github.com/TelemetryWorks/rcc-106-standards/actions/runs/41965582867",
+    "artifact_zip_sha256": "98876b69f3ae79e0fec60db7b2ac26dddd16baa3e11bddc90ea34f78a52b9025",
+    "artifact_zip_bytes": 270948,
+    "records": 741,
+    "releases": 49,
+    "assets": 741,
+    "received_bytes": 1021513581,
+    "unique_blobs": 643,
+    "unique_blob_bytes": 956042413,
+    "inventory_sha256": "7d8d24ebb52f353fad08944c34be50d9d9be88a40ea620a3d81a90dcf5d4c07c",
+    "http_statuses": {
+      "200": 741
+    },
+    "attempts": {
+      "1": 741
+    },
+    "download_started": "2026-11-05T04:05:36.306833+00:00",
+    "download_finished": "2026-11-05T04:07:55.958898+00:00",
+    "reused_checkpoints": 0,
+    "result": "PASS"
+  },
+  "artifact": {
+    "id": 13387332985,
+    "name": "mirror-audit-41965582867-1",
+    "digest": "sha256:98876b69f3ae79e0fec60db7b2ac26dddd16baa3e11bddc90ea34f78a52b9025",
+    "expires_at": "2026-12-05T04:08:05Z",
+    "size_in_bytes": 270948
+  },
+  "manifest_sha256": "a48de81efa38ff5641bb55ba0318fb5d5eb1a4923ecba12c1b3b4239c70ea111",
+  "independent_verification": {
+    "agent": "all manifest/assets/download observations/final records; sizes/hashes/API digests/URLs/states/times; inventories unchanged; safe ZIP/member CRC/snapshot git comparison",
+    "coordinator": "live API head/run/digest/expiry plus ZIP/member bytes/snapshot Git comparison and independent complete741-row crossjoin/totals/zero-reuse"
+  },
+  "historical_candidates": [
+    {
+      "requested_url": "https://www.spiraltechinc.com/otis/106-19/124-17_TMATS_Handbook.pdf",
+      "final_url": "https://www.spiraltechinc.com/otis/106-19/124-17_TMATS_Handbook.pdf",
+      "status": 200,
+      "content_type": "application/pdf",
+      "bytes": 3945859,
+      "sha256": "8622c2789591ed891f02e0fce9121cf09fd3097b94412491dcdc62e2d00f7006",
+      "retrieved_utc": "2026-11-05T04:09:36.164257+00:00"
+    },
+    {
+      "requested_url": "https://archive.org/download/DTIC_AD1025657/DTIC_AD1025657.pdf",
+      "final_url": "https://dn760104.eu.archive.org/0/items/DTIC_AD1025657/DTIC_AD1025657.pdf",
+      "status": 200,
+      "content_type": "application/pdf",
+      "bytes": 4588525,
+      "sha256": "7bcf62d0d7802ab7018c00f142ab6d831845d6cfe8bcccf7ccb1187df8ce9365",
+      "retrieved_utc": "2026-11-05T04:12:08.288585+00:00"
+    }
+  ],
+  "historical_checks": [
+    {
+      "requested_url": "https://www.trmc.osd.mil/wiki/rest/api/content/113019802/child/attachment?limit=200",
+      "checked_utc": "2026-11-05T04:09:59.140717+00:00",
+      "status": 200,
+      "final_url": "https://www.trmc.osd.mil/wiki/rest/api/content/113019802/child/attachment?limit=200",
+      "content_type": "application/json",
+      "received_bytes": 1441,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "local_evidence": "source-0.bin"
+    },
+    {
+      "requested_url": "https://www.trmc.osd.mil/wiki/rest/api/content/search?cql=text~%22124-17%22&limit=25",
+      "checked_utc": "2026-11-05T04:09:59.142309+00:00",
+      "status": 200,
+      "final_url": "https://www.trmc.osd.mil/wiki/rest/api/content/search?cql=text~%22124-17%22&limit=25",
+      "content_type": "application/json",
+      "received_bytes": 14025,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "local_evidence": "source-1.bin"
+    },
+    {
+      "requested_url": "https://web.archive.org/cdx/search/cdx?url=www.wsmr.army.mil/RCCsite/Documents/124-17*&output=json&collapse=urlkey",
+      "checked_utc": "2026-11-05T04:10:01.395588+00:00",
+      "error": "TimeoutError",
+      "message": "The read operation timed out"
+    },
+    {
+      "requested_url": "https://web.archive.org/web/20210822212902id_/https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf",
+      "checked_utc": "2026-11-05T04:10:01.476183+00:00",
+      "status": 200,
+      "final_url": "https://web.archive.org/web/20210822212902id_/https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf",
+      "content_type": "text/html; charset=utf-8",
+      "received_bytes": 179718,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "local_evidence": "source-3.bin"
+    },
+    {
+      "requested_url": "https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf",
+      "checked_utc": "2026-11-05T04:10:02.011896+00:00",
+      "error": "URLError",
+      "message": "<urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>"
+    },
+    {
+      "requested_url": "https://apps.dtic.mil/sti/pdfs/AD1077368.pdf",
+      "checked_utc": "2026-11-05T04:10:07.281440+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 403: Forbidden"
+    },
+    {
+      "requested_url": "https://www.science.gov/topicpages/t/technology+transfer+handbook",
+      "checked_utc": "2026-11-05T04:10:07.527733+00:00",
+      "status": 200,
+      "final_url": "https://www.science.gov/topicpages/t/technology+transfer+handbook",
+      "content_type": "text/html;charset=iso-8859-1",
+      "received_bytes": 683178,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "local_evidence": "source-6.bin"
+    },
+    {
+      "requested_url": "https://www.spiraltechinc.com/otis/irig.html",
+      "checked_utc": "2026-11-05T04:10:09.163406+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 500: Internal Server Error"
+    },
+    {
+      "requested_url": "https://apps.dtic.mil/sti/pdfs/AD1025657.pdf",
+      "checked_utc": "2026-11-05T04:11:17.754978+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 403: Forbidden"
+    },
+    {
+      "requested_url": "https://apps.dtic.mil/sti/trecms/pdf/AD1025657.pdf",
+      "checked_utc": "2026-11-05T04:11:17.756567+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 403: Forbidden"
+    },
+    {
+      "requested_url": "https://apps.dtic.mil/sti/citations/AD1025657",
+      "checked_utc": "2026-11-05T04:11:18.219162+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 403: Forbidden"
+    },
+    {
+      "requested_url": "https://web.archive.org/cdx/search/cdx?url=www.wsmr.army.mil%2FRCCsite%2FDocuments%2F124-17*&output=json&filter=mimetype%3Aapplication%2Fpdf&collapse=urlkey",
+      "checked_utc": "2026-11-05T04:11:18.241689+00:00",
+      "error": "TimeoutError",
+      "message": "The read operation timed out"
+    },
+    {
+      "requested_url": "https://archive.org/metadata/DTIC_AD1025657",
+      "checked_utc": "2026-11-05T04:11:18.373724+00:00",
+      "status": 200,
+      "final_url": "https://archive.org/metadata/DTIC_AD1025657",
+      "content_type": "application/json",
+      "received_bytes": 35054,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "sha256": "7bcc82fc13b30f6d993186bb903231bacc0c6c32c7a424e5e17855d87682096e",
+      "local_evidence": "followup-4.bin"
+    },
+    {
+      "requested_url": "https://www.trmc.osd.mil/wiki/rest/api/content/search?cql=title~%22124-17%22&limit=100",
+      "checked_utc": "2026-11-05T04:11:19.932591+00:00",
+      "status": 200,
+      "final_url": "https://www.trmc.osd.mil/wiki/rest/api/content/search?cql=title~%22124-17%22&limit=100",
+      "content_type": "application/json",
+      "received_bytes": 263,
+      "read_limit_hit": false,
+      "pdf_header": false,
+      "sha256": "0795fba752e31019fe646b90f13a7389df9a1b288e31eb23ee1b4ef46113f608",
+      "local_evidence": "followup-5.bin"
+    },
+    {
+      "requested_url": "https://www.irig106.org/docs/rcc/124-17_TMATS_Handbook.pdf",
+      "checked_utc": "2026-11-05T04:11:20.181020+00:00",
+      "error": "HTTPError",
+      "message": "HTTP Error 404: Not Found"
+    }
+  ],
+  "candidate_comparison": {
+    "raw_files_byte_equal": true,
+    "raw_file_bytes": 280092,
+    "raw_file_sha256": "711ec967f09303e5f2aa5452d5baeb96cd34b0416e4fefd954589ed6c7423aeb",
+    "raw_crlf_count": 5680,
+    "lf_normalized_utf8_bytes": 274412,
+    "lf_normalized_utf8_sha256": "29f2811251ff987c26e283f6043917cddbbc97e61cc4d8f3a54605a0fb5b54a0",
+    "normalization": "Replace CRLF bytes with LF bytes only; no other whitespace changes. UTF-8 decoding/re-encoding is lossless.",
+    "raw_extraction_pages": 163,
+    "historical_local_comparison": "text-comparison.json preserved unchanged; its full_text_sha256 labels represented read_text universal-newline normalization, not raw file bytes."
+  },
+  "candidate_render_comparison": [
+    {
+      "page": 1,
+      "png_equal": true
+    },
+    {
+      "page": 3,
+      "png_equal": true
+    },
+    {
+      "page": 163,
+      "png_equal": true
+    }
+  ],
+  "candidate_draft_check": {
+    "pages_extracted": 163,
+    "draft_word_text_matches": [],
+    "blank_text_pages": [],
+    "limit": "Text search cannot exclude image-only watermarks; only pages1,3,163 rendered and inspected."
+  },
+  "candidate_metadata_limit": "Both PDF Title fields say (Draft) TMATS Users Guide (Draft); both created2017-01-31; vendor modified2017-01-31, archive modified2018-01-16/iText. Neither download from issuer; no official byte hash or final-status proof.",
+  "distribution_observed": "Distribution A visible cover physicalpage1, both copies render identically on inspected pages1,3,163.",
+  "local_only_evidence": [
+    "files/audits/manual-41965582867/",
+    "files/audits/verify_manual_run.py",
+    "files/audits/rcc124-17-2026-11-05/"
+  ],
+  "delivery_scope": "Documentation/evidence only; no manifest/documents/release assets altered; historical candidates not mirrored."
+}
