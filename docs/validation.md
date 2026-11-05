@@ -27,6 +27,49 @@ That optional check compares asset names, missing/extra/duplicate assets,
 sizes, URLs and upload states. Inventory metadata alone does not prove remote
 bytes. Use the full audit for that purpose.
 
+## Approved local input locations
+
+The validator's file-reading interface is restricted to fixed locations under
+the repository containing the trusted script:
+
+| Input | Permitted location |
+|---|---|
+| Manifest | Exact repository `manifest.toml`, or `.toml` files below `files/validation-inputs/` |
+| Inventory | `.json` files below `files/audits/` or `files/validation-inputs/` |
+
+Canonical relative paths (relative to the current working directory) and
+absolute paths inside those locations work. Directory names and extensions
+use the spelling above. Parent traversal (`..`), outside paths, network/device
+paths, drive-relative paths, unsafe Windows components, and symlink or Windows
+reparse-point components are rejected before file contents are read. Links
+inside the repository are also rejected. A linked allowed directory cannot
+make an external directory trusted. There is no caller-selected root override.
+Invoke the script through its actual checkout path; a linked checkout entry
+is rejected rather than silently resolving to a different trusted root.
+
+This intentionally replaces the previous arbitrary-local-file interface.
+For an external candidate, a **trusted operator must first approve its source
+and contents** and stage it as a regular file in `files/validation-inputs/`:
+
+```sh
+python scripts/validate_manifest.py --manifest files/validation-inputs/candidate.toml
+python scripts/validate_manifest.py --inventory files/validation-inputs/inventory.json
+```
+
+Staging is a trust decision, not automatic authorization to copy a model's
+chosen path. Do not give an untrusted agent unrestricted staging or repository
+write access. These ignored files are local inputs, not material to commit.
+The `parse_manifest(bytes)` API remains available to trusted callers that
+already have bytes; it grants no filesystem access.
+
+The boundary assumes trusted script/repository ownership and no hostile
+concurrent filesystem writer. Checks followed by a read are subject to
+directory-replacement races (TOCTOU); this is not OS confinement. Deployments
+with hostile writers or stronger requirements need a sandbox or appropriate
+platform-specific no-follow descriptor traversal. Hard-link provenance and
+the trustworthiness of staged contents remain the operator's responsibility.
+See the [before/after evaluation](evals/2026-11-03-input-boundary.md).
+
 ## Routine CI
 
 `Archive validation` runs on pull requests and pushes to `main`, using

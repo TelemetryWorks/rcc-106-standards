@@ -1,7 +1,10 @@
 # Proposed validation input boundary — 2026-11-03
 
-**Proposal only; the CLI contract has not changed.** Coordinator is obtaining
-the user's decision before implementing this compatibility change.
+**Owner approved implementation on 2026-11-04; independent source/security
+review completed; PR CI and Sonar verification pending.**
+The historical proposal/evaluation below is retained. The implementation and
+actual replay results are recorded at the end; this document does not claim
+that a policy model alone provides security.
 
 ## Evidence and assumptions
 
@@ -105,3 +108,77 @@ Primary references: [Python pathlib resolution](https://docs.python.org/3.11/lib
 [Python os.open and platform-specific descriptor support](https://docs.python.org/3.11/library/os.html#os.open),
 [CodeQL path injection guidance](https://codeql.github.com/codeql-query-help/python/py-path-injection/),
 and [OWASP path traversal guidance](https://owasp.org/www-community/attacks/Path_Traversal).
+
+## Approved implementation and replay — 2026-11-04
+
+The owner approved the fixed-location compatibility change. `load_manifest`
+and the CLI inventory read now both use `read_input`, which authorizes the
+lexical path against the fixed script-derived repository root before any
+content access. The script-derived root retains its lexical checkout identity
+rather than resolving away a linked checkout; invocation through a linked
+repository entry is rejected. Manifest inputs are the exact repository `manifest.toml` or
+staged `.toml` files; inventories are `.json` files in `files/audits/` or
+`files/validation-inputs/`. Subdirectories are permitted. There is no CLI root
+override and the pure byte parser is unchanged.
+
+The guard rejects parent syntax, drive-relative/network/device paths,
+outside absolute paths and sibling-prefix escapes, then checks portable
+components and the input-specific location/extension. It walks `lstat` from
+the trusted root through every component, rejecting symlinks and all Windows
+reparse points before reading, and requires a regular final file. It never
+resolves an allowed directory's link target into a new authority. Foreign
+Windows drive/backslash syntax is rejected on POSIX; canonical native
+separators and mixed Windows separators remain usable on Windows.
+
+Actual read-only replay of the **same 18 existing public-file cases** matches
+every proposal decision: **12 allowed, six denied, zero deviations**. All 12
+permitted cases retain the prior CLI exit result. Two previously valid
+parent-syntax selections now fail before reading; the other four denied
+selections previously read an inappropriate file and failed parsing. The
+outside-repository fixture regression is intentionally replaced by approved
+staging and explicit before-read rejection regressions. Defaults and the
+documented saved inventory still pass. No new network download was used.
+
+The 12 preexisting parser/metadata/total/reconciliation helper function ASTs
+are exactly unchanged against main `0569fc9`; the intentional differences are
+file access and CLI help/dispatch. Local reproducible replay command:
+`python files/audits/evaluate_input_boundary.py`. Script and full results are
+ignored local artifacts, with results in
+`files/audits/2026-11-04-input-boundary-eval.json`; the original baseline is
+preserved. These are public-file compatibility observations, not a fresh
+mirror byte audit.
+
+New offline regressions assert that blocked paths never invoke the content
+read. Coverage includes traversal, outside/sibling paths, Windows drive/UNC/
+device/ADS/reserved names, wrong location/extension, valid relative/absolute
+and staged inputs, malformed-but-permitted inputs, pure parser independence,
+symlink files/directories/allowed roots and actual Windows junctions replacing
+intermediate directories, audit/staging/files/repository roots. Local Windows
+symlink tests explicitly skip without privilege; real junction tests require
+no privilege and execute locally. Ubuntu/Windows CI results remain pending.
+The complete local offline suite ran 52 tests successfully (49 executed,
+three symlink privilege skips); saved inventory validation retained the
+741-record/49-release/643-blob totals and whitespace checks passed.
+The coordinator independently repeated these checks and approved the stable
+four-file source/security change before publication.
+
+Independent review caught a misplaced junction-test block before publication.
+Each native junction scenario now creates and removes its own junction and
+asserts the exact reparse rejection diagnostic, with an `lstat` spy proving
+the selected link was reached and content was never read. A real copied
+module imported and executed through a linked checkout also verifies lexical
+root identity, rejection at that root, no content reads, and the actual CLI
+diagnostic. These checks prevent outside-root or missing-file failures from
+masquerading as junction protection.
+
+Security limits remain as stated above: the trusted root and script must be
+owned by the operator, staging needs explicit trusted approval, and hostile
+concurrent filesystem mutation requires OS confinement. Hard links do not
+establish source provenance; trusted staging/ownership is essential. This
+change is neither a race-proof sandbox nor scanner suppression. Actual Sonar
+findings must be evaluated after CI; a correct boundary may still require
+legitimate issue-specific review if custom validation is not recognized.
+
+Implementation references verified in primary documentation:
+[Python lstat and symlink behavior](https://docs.python.org/3.11/library/pathlib.html#pathlib.Path.lstat)
+and [Windows reparse attribute constants](https://docs.python.org/3.11/library/stat.html#stat.FILE_ATTRIBUTE_REPARSE_POINT).
