@@ -4,6 +4,13 @@ These items are believed to exist, or were linked from a source, but no valid co
 
 ## Documents not retrieved
 
+**2026-11-05 UTC follow-up:** two plausible complete RCC 124-17 PDF copies
+were recovered locally and inspected. They remain outside the manifest and
+release assets pending provenance/distribution review. See the
+[bounded recovery report](audits/2026-11-05-rcc124-17.md) for hashes, visible
+marking, official corroboration and third-party source limitations. The
+earlier failed retrieval attempts below are retained as history.
+
 1. **RCC 124-17, TMATS Handbook.** The WSMR RCC site had a `124-17_TMATS_Handbook/` folder, but the only Wayback capture of the PDF is an HTML page. It is not on TRMC, which lists only 124-22, and not on irig106.org, which has 124-13, 124-15 and 124-19.
    - https://web.archive.org/web/20210822212902id_/https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf (returned HTML, 179,718 bytes, rejected)
    - https://www.trmc.osd.mil/wiki/rest/api/content/113019802/child/attachment (lists only 124-22)
@@ -52,7 +59,7 @@ Investigated 2026-09-25, with the MDL version 1 source rechecked on 2026-11-02. 
 
 ### RCC 123 / 124
 
-- **RCC 124-17 TMATS Handbook.** It is still unretrievable, and no new source appeared. URLs tried:
+- **RCC 124-17 TMATS Handbook.** At the 2026-09-25 investigation no valid source was retrieved. The 2026-11-05 candidate recovery above supersedes that negative finding; no new document is archived yet. Earlier URLs tried:
   - https://web.archive.org/web/20210822212902id_/https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf. This returned HTML. The CDX lists only HTML/301 captures of that URL. The 2018 folder page `Publications.aspx?RootFolder=/RCCsite/Documents/124-17_TMATS_Handbook` confirms the filename, but the PDF itself was never captured.
   - https://www.irig106.org/docs/rcc/124-17_TMATS_Handbook.pdf returned 404, as did https://www.irig106.org/docs/124-17/124-17_TMATS_Handbook.pdf.
   - TRMC CQL `text~"124-17"` returned only 124-22.

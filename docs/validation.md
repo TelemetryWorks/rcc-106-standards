@@ -131,6 +131,8 @@ The pinned action definitions use Node 24 on GitHub-hosted runners. Sources:
 [GitHub concurrency behavior](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency),
 and [artifact retention and upload behavior](https://github.com/actions/upload-artifact).
 
-The manual full-audit workflow was not dispatched as part of implementing
-these checks. Offline tests and PR/push CI validate the lightweight path;
-they do not claim an end-to-end execution of the manual network workflow.
+The first authorized end-to-end manual audit completed successfully on
+2026-11-05 UTC, on reviewed main `470638c`. Its retained artifact and all 741
+received-byte observations were independently verified; see the
+[execution report](../audits/2026-11-05-manual-audit.md). Routine PR/push CI
+still exercises only the lightweight offline path.
