@@ -9,13 +9,17 @@ import argparse
 import collections
 import datetime
 import json
+import os
 import pathlib
 import re
+import stat
 import sys
 import tomllib
 import urllib.parse
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+# Keep lexical checkout identity: resolving here would hide a linked root from
+# the component checks below. The script installation itself must be trusted.
+ROOT = pathlib.Path(__file__).absolute().parent.parent
 REPO = "TelemetryWorks/rcc-106-standards"
 KINDS = {"full", "front-matter", "chapter", "appendix", "annex", "handbook",
          "standard", "schema", "change-marked", "companion"}
@@ -156,12 +160,66 @@ def parse_manifest(contents):
     return data["document"]
 
 
-def load_manifest(path):
+def input_relative_path(path):
+    """Reject ambiguous/traversing syntax before filesystem access."""
+    raw = os.fspath(path)
+    windows = pathlib.PureWindowsPath(raw)
+    if (".." in windows.parts or raw.startswith(("\\\\", "//")) or
+            (windows.drive and not windows.is_absolute()) or
+            (os.name != "nt" and (windows.drive or "\\" in raw)) or
+            (os.name == "nt" and windows.root and not windows.drive)):
+        raise ValueError("Input path uses forbidden traversal, drive or network syntax")
+    candidate = pathlib.Path(raw).absolute()
     try:
-        contents = pathlib.Path(path).read_bytes()
+        relative = candidate.relative_to(ROOT)
+    except ValueError as exc:
+        raise ValueError("Input must be staged inside the trusted repository") from exc
+    if not relative.parts or not all(safe_component(p) for p in relative.parts):
+        raise ValueError("Input path has unsafe components")
+    return relative
+
+
+def permitted_input(relative, kind):
+    staged = relative.parts[:2] == ("files", "validation-inputs")
+    if kind == "manifest":
+        return relative == pathlib.Path("manifest.toml") or (staged and relative.suffix == ".toml")
+    if kind == "inventory":
+        return relative.suffix == ".json" and (staged or relative.parts[:2] == ("files", "audits"))
+    return False
+
+
+def checked_input_path(path, kind):
+    """Authorize a fixed lexical location, then reject links/reparse points.
+
+    ROOT comes from the trusted installed script, never a CLI argument. This
+    check assumes no hostile concurrent filesystem writer; it is not a sandbox.
+    """
+    relative = input_relative_path(path)
+    if not permitted_input(relative, kind):
+        raise ValueError(f"Input is outside the fixed {kind} locations; stage approved inputs first")
+    current = ROOT
+    for part in (None, *relative.parts):
+        if part is not None:
+            current = current / part
+        info = current.lstat()
+        if stat.S_ISLNK(info.st_mode) or getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+            raise ValueError("Input path contains a link or Windows reparse point")
+        if current != ROOT / relative and not stat.S_ISDIR(info.st_mode):
+            raise ValueError("Input parent is not a directory")
+    if not stat.S_ISREG(info.st_mode):
+        raise ValueError("Input must be a regular file")
+    return current
+
+
+def read_input(path, kind):
+    try:
+        return checked_input_path(path, kind).read_bytes()
     except OSError as exc:
-        raise ValueError(f"Cannot read manifest: {type(exc).__name__}") from exc
-    return parse_manifest(contents)
+        raise ValueError(f"Cannot read {kind}: {type(exc).__name__}") from exc
+
+
+def load_manifest(path):
+    return parse_manifest(read_input(path, "manifest"))
 
 
 def totals(docs):
@@ -197,13 +255,14 @@ def inventory_errors(docs, releases):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", type=pathlib.Path, default=ROOT / "manifest.toml")
-    parser.add_argument("--inventory", type=pathlib.Path, help="saved audit inventory JSON (metadata only)")
+    parser.add_argument("--manifest", type=pathlib.Path, default=ROOT / "manifest.toml",
+                        help="repository manifest.toml or approved .toml under files/validation-inputs")
+    parser.add_argument("--inventory", type=pathlib.Path, help="approved JSON under files/audits or files/validation-inputs")
     args = parser.parse_args(argv)
     try:
         docs = load_manifest(args.manifest)
         if args.inventory:
-            errors = inventory_errors(docs, json.loads(args.inventory.read_text(encoding="utf-8")))
+            errors = inventory_errors(docs, json.loads(read_input(args.inventory, "inventory").decode("utf-8")))
             if errors:
                 raise ValueError("\n".join(errors))
     except (ValueError, OSError) as exc:
