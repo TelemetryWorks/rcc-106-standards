@@ -8377,6 +8377,42 @@ distribution = "A"
 distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE,"
 
 [[document]]
+edition = "rcc-124-17"
+kind = "handbook"
+title = "Telemetry Attributes Transfer Standard (TMATS) Handbook (January 2017; vendor copy)"
+path = "files/rcc-124/124-17/124-17_TMATS_Handbook.pdf"
+asset = "124-17_TMATS_Handbook.pdf"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-124-17/124-17_TMATS_Handbook.pdf"
+original_urls = ["https://www.spiraltechinc.com/otis/106-19/124-17_TMATS_Handbook.pdf"]
+original_filenames = ["124-17_TMATS_Handbook.pdf"]
+sha256 = "8622c2789591ed891f02e0fce9121cf09fd3097b94412491dcdc62e2d00f7006"
+size = 3945859
+pages = 163
+pdf_created = "2017-01-31"
+retrieved = "2026-11-06"
+distribution = "A"
+distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE, DISTRIBUTION IS UNLIMITED"
+note = "Canonical archive filename for the vendor-hosted copy; canonical is an archive naming choice, not an authenticity ranking. Reported PDF modification date 2017-01-31; retain the separate Internet Archive variant, which reports 2018-01-16 and an iText-modified producer. Visible title page: RCC Document 124-17, January 2017. Cover Distribution A marking visually verified. Both source PDFs retain metadata Title (Draft) TMATS User\u2019s Guide (Draft); no whole-word draft in extracted body text, but only pages 1, 3 and 163 were visually inspected. Complete extracted text and those three renders match the other source variant; this is not full visual or PDF-byte equivalence. Neither source authenticates issuing-organization bytes or establishes final-edition status. Official RCC references corroborate edition identity only. Original WSMR reference: https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf (not a verified byte source). See audits/2026-11-06-rcc124-17-archival.md."
+
+[[document]]
+edition = "rcc-124-17"
+kind = "handbook"
+title = "Telemetry Attributes Transfer Standard (TMATS) Handbook (January 2017; Internet Archive source variant)"
+path = "files/rcc-124/124-17/124-17_TMATS_Handbook__archive.pdf"
+asset = "124-17_TMATS_Handbook__archive.pdf"
+mirror_url = "https://github.com/TelemetryWorks/rcc-106-standards/releases/download/rcc-124-17/124-17_TMATS_Handbook__archive.pdf"
+original_urls = ["https://archive.org/download/DTIC_AD1025657/DTIC_AD1025657.pdf", "https://dn760104.eu.archive.org/0/items/DTIC_AD1025657/DTIC_AD1025657.pdf"]
+original_filenames = ["DTIC_AD1025657.pdf"]
+sha256 = "7bcf62d0d7802ab7018c00f142ab6d831845d6cfe8bcccf7ccb1187df8ce9365"
+size = 4588525
+pages = 163
+pdf_created = "2017-01-31"
+retrieved = "2026-11-06"
+distribution = "A"
+distribution_text = "DISTRIBUTION A: APPROVED FOR PUBLIC RELEASE, DISTRIBUTION IS UNLIMITED"
+note = "Distinct provenance variant of the same edition, not a separate revision. Community-uploaded Internet Archive item labeled DTIC AD1025657, not a direct DTIC download. Reported modification date 2018-01-16 and iText-modified producer; not assumed to be a metadata-only rewrite. Its source URLs are byte-specific and must not be used as fallback for the vendor copy. Visible title page: RCC Document 124-17, January 2017. Cover Distribution A marking visually verified. Both source PDFs retain metadata Title (Draft) TMATS User\u2019s Guide (Draft); no whole-word draft in extracted body text, but only pages 1, 3 and 163 were visually inspected. Complete extracted text and those three renders match the other source variant; this is not full visual or PDF-byte equivalence. Neither source authenticates issuing-organization bytes or establishes final-edition status. Official RCC references corroborate edition identity only. Original WSMR reference: https://www.wsmr.army.mil/RCCsite/Documents/124-17_TMATS_Handbook/124-17_TMATS_Handbook.pdf (not a verified byte source). See audits/2026-11-06-rcc124-17-archival.md."
+
+[[document]]
 edition = "rcc-124-19"
 kind = "handbook"
 title = "Telemetry Attributes Transfer Standard (TMATS) Handbook"

@@ -2,9 +2,10 @@
 
 Retrieved 2026-09-25. Sources: www.irig106.org/docs (also served as ftp.irig106.org), www.trmc.osd.mil/wiki publicRCC space (REST attachment listings), and web.archive.org captures of the retired www.wsmr.army.mil/RCCsite for a few items not otherwise available.
 
-**Current archive: 741 files, 1,021,513,581 bytes (974.2 MiB).** This includes
+**Current archive: 743 files, 1,030,047,965 bytes (982.3 MiB).** This includes
 the 472-file base collection below, the 263-file extension, and two RCC 200
-files added on 2026-09-27, plus four supporting files added on 2026-11-02.
+files added on 2026-09-27, four supporting files added on 2026-11-02, and two
+RCC 124-17 source variants added on 2026-11-06.
 The tables below describe those collection stages.
 
 ## Base collection
@@ -168,3 +169,20 @@ URLs, verified to return identical bytes.
 
 Sources: [RCC 129 TmNS Handbook](https://www.trmc.osd.mil/wiki/pages/viewpage.action?pageId=141656292)
 and [RCC References](https://www.trmc.osd.mil/wiki/pages/viewpage.action?pageId=122454021).
+
+## RCC 124-17 recovery — 2026-11-06
+
+One January 2017 edition, **two distinct source variants**, 8,534,384 bytes.
+Both are 163-page PDFs with Distribution A visibly marked on the cover.
+
+| Edition | Asset | Kind | Bytes | Distribution |
+|---|---|---|---:|---|
+| rcc-124-17 | 124-17_TMATS_Handbook.pdf | handbook | 3,945,859 | A |
+| rcc-124-17 | 124-17_TMATS_Handbook__archive.pdf | handbook | 4,588,525 | A |
+
+The vendor copy's canonical name is an archive naming choice. The community
+Internet Archive copy is a distinct provenance variant, not a new revision or
+authenticated DTIC download. Both retain conflicting "Draft" metadata titles;
+the Archive copy reports a later modification date and iText producer rewrite.
+Extracted text and inspected cover/title/end renders match, with the limits
+recorded in the [archival note](audits/2026-11-06-rcc124-17-archival.md).
