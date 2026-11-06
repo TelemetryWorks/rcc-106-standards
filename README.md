@@ -43,7 +43,8 @@ python scripts/fetch.py --edition 106-23 --chapter 9    # one chapter
 python scripts/fetch.py --kind handbook                 # RCC 118, 119, 123, 124, 129
 python scripts/fetch.py --edition rcc-129-25            # TmNS handbook and MDL example
 python scripts/fetch.py --kind change-marked            # pink sheets and drafts
-python scripts/fetch.py                                 # everything (~974 MiB)
+python scripts/fetch.py --edition rcc-124-17            # TMATS handbook, two source variants
+python scripts/fetch.py                                 # everything (~982 MiB)
 python scripts/fetch.py --verify                        # re-check local copies
 ```
 
@@ -58,10 +59,14 @@ Retrieved 2026-09-25, with later additions dated in the manifest, from:
 - the TRMC public RCC wiki (`https://www.trmc.osd.mil/wiki/spaces/publicRCC/`),
 - the Internet Archive's captures of the retired `www.wsmr.army.mil/RCCsite`
   for a few items available nowhere else (for example the only full bundle of
-  106-13 and the 106-15 TMATS HTML schema bundle).
+  106-13 and the 106-15 TMATS HTML schema bundle),
+- Spiral Technology's vendor-hosted RCC 124-17 copy and a community-uploaded
+  Internet Archive copy labeled DTIC AD1025657, retained as distinct source
+  variants of the same January 2017 handbook.
 
-Every entry records all original URLs, so a document can always be traced
-back to where RCC published it.
+Every entry records its verified source URLs. Some retired publications are
+available only from third parties; those records distinguish byte provenance
+from official references that corroborate the edition's identity.
 
 **Two copies of the same document.** The two sites often host different
 issues of the same chapter: TRMC frequently has a later re-issue (for example
@@ -69,6 +74,15 @@ issues of the same chapter: TRMC frequently has a later re-issue (for example
 irig106.org has the original. Both are kept; the irig106.org copy carries the
 suffix `__irig106org`, and each entry's `pdf_created` and `note` say which is
 which.
+
+**RCC 124-17 recovery.** The canonical filename denotes the vendor-hosted
+copy; `__archive` preserves the distinct Internet Archive bytes under the
+same release. Neither source authenticates issuing-organization bytes. Both
+PDFs retain a metadata title containing "Draft", despite their visible
+January 2017 publication identity and Distribution A covers. Matching extracted
+text and three inspected page renders do not prove full visual equivalence
+or final-edition authenticity. See the
+[archival provenance note](audits/2026-11-06-rcc124-17-archival.md).
 
 ## Distribution
 
